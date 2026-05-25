@@ -1,98 +1,148 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useRouter, type Href } from 'expo-router';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { formatCpf } from '@/src/lib/cpf';
+import { calcularIdade, formatIsoToBR } from '@/src/lib/date';
+import { usePacientes } from '@/src/features/pacientes/pacientes-hooks';
+import type { Paciente } from '@/src/db/schema';
 
-export default function HomeScreen() {
+const pacienteHref = (id: string): Href => `/pacientes/${id}` as Href;
+
+export default function PacientesScreen() {
+  const router = useRouter();
+  const { data, isLoading, isRefetching, refetch, error } = usePacientes();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Pacientes</Text>
+        <Text style={styles.count}>{data?.length ?? 0}</Text>
+      </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {isLoading ? (
+        <View style={styles.centered}>
+          <ActivityIndicator />
+        </View>
+      ) : error ? (
+        <View style={styles.centered}>
+          <Text style={styles.errorText}>Erro ao carregar: {error.message}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={data ?? []}
+          keyExtractor={(p) => p.id}
+          contentContainerStyle={
+            (data?.length ?? 0) === 0 ? styles.emptyContainer : styles.listContent
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyTitle}>Nenhum paciente cadastrado</Text>
+              <Text style={styles.emptyMuted}>
+                Toque no botão + para cadastrar o primeiro paciente.
+              </Text>
+            </View>
+          }
+          renderItem={({ item }) => (
+            <PacienteRow paciente={item} onPress={() => router.push(pacienteHref(item.id))} />
+          )}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+          }
+        />
+      )}
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Cadastrar paciente"
+        style={styles.fab}
+        onPress={() => router.push('/pacientes/novo' as Href)}>
+        <Text style={styles.fabText}>+</Text>
+      </Pressable>
+    </SafeAreaView>
+  );
+}
+
+function PacienteRow({
+  paciente,
+  onPress,
+}: {
+  paciente: Paciente;
+  onPress: () => void;
+}) {
+  const idade = calcularIdade(paciente.dataNascimento);
+  const ultima = paciente.visitaMaisRecente
+    ? formatIsoToBR(paciente.visitaMaisRecente)
+    : 'sem visitas';
+  return (
+    <Pressable accessibilityRole="button" onPress={onPress} style={styles.row}>
+      <View style={styles.rowMain}>
+        <Text style={styles.rowName}>{paciente.nome}</Text>
+        <Text style={styles.rowMeta}>
+          {formatCpf(paciente.cpf)} · {paciente.sexo} · {idade ?? '?'} anos
+        </Text>
+      </View>
+      <Text style={styles.rowDate}>Última: {ultima}</Text>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  safe: { flex: 1, backgroundColor: '#fff' },
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+  },
+  title: { fontSize: 24, fontWeight: '700' },
+  count: { fontSize: 14, color: '#666' },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+  errorText: { color: '#b00020' },
+  listContent: { paddingBottom: 96 },
+  emptyContainer: { flexGrow: 1, justifyContent: 'center', padding: 24 },
+  emptyState: { alignItems: 'center', gap: 8 },
+  emptyTitle: { fontSize: 16, fontWeight: '600' },
+  emptyMuted: { fontSize: 14, color: '#666', textAlign: 'center' },
+  row: {
+    paddingVertical: 14,
+    paddingHorizontal: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    gap: 12,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  rowMain: { flex: 1, gap: 2 },
+  rowName: { fontSize: 16, fontWeight: '500' },
+  rowMeta: { fontSize: 13, color: '#666' },
+  rowDate: { fontSize: 12, color: '#999' },
+  separator: { height: 1, backgroundColor: '#eee', marginHorizontal: 24 },
+  fab: {
     position: 'absolute',
+    right: 24,
+    bottom: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#0a7ea4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
+  fabText: { color: '#fff', fontSize: 28, lineHeight: 30, fontWeight: '300' },
 });
