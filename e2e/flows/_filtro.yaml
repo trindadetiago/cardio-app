@@ -1,0 +1,28 @@
+# Filtrar por risco e ordenar por prioridade de visita (RF003/RF004 / UC03/UC04).
+# Reinicia o app (sem limpar dados) para voltar à lista com a pilha de navegação limpa.
+appId: com.anonymous.cardio-remoto
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "pacientes-title"
+    timeout: 30000
+# Filtra por "Moderado": o paciente de teste (amarelo) deve continuar visível.
+- tapOn:
+    id: "filtro-amarelo"
+- assertVisible:
+    id: "paciente-row-0"
+# Filtra por "Controlado": paciente moderado NÃO deve aparecer.
+- tapOn:
+    id: "filtro-verde"
+- assertNotVisible:
+    id: "paciente-row-0"
+# Volta para todos e alterna a ordenação por prioridade/nome.
+- tapOn:
+    id: "filtro-todos"
+- tapOn:
+    id: "sort-toggle"
+- tapOn:
+    id: "sort-toggle"
+- assertVisible:
+    id: "paciente-row-0"

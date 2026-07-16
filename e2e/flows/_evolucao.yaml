@@ -1,0 +1,23 @@
+# Visualizar evolução dos dados coletados: gráfico + tabela (RF006 / UC06).
+# Continua a partir da tela de detalhe do paciente (fluxo _visita).
+appId: com.anonymous.cardio-remoto
+---
+- extendedWaitUntil:
+    visible:
+      id: "btn-evolucao"
+    timeout: 30000
+- tapOn:
+    id: "btn-evolucao"
+- extendedWaitUntil:
+    visible:
+      id: "evolucao-grafico"
+    timeout: 30000
+# Alterna para a tabela e de volta para o gráfico.
+- tapOn:
+    text: "Tabela"
+- assertVisible:
+    id: "evolucao-tabela"
+- tapOn:
+    text: "Gráfico"
+- assertVisible:
+    id: "evolucao-grafico"

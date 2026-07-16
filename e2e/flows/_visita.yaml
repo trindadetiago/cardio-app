@@ -1,0 +1,39 @@
+# Inserir nova visita com PA fora da meta -> risco "Moderado" (RF005 / UC05).
+# (A classificação de 3 parâmetros -> "Grave" é coberta pelos testes unitários de risco.)
+appId: com.anonymous.cardio-remoto
+---
+- tapOn:
+    id: "paciente-row-0"
+- extendedWaitUntil:
+    visible:
+      id: "btn-nova-visita"
+    timeout: 30000
+- tapOn:
+    id: "btn-nova-visita"
+- extendedWaitUntil:
+    visible:
+      id: "visita-paSistolica"
+    timeout: 30000
+# PA 150/95 -> 1 parâmetro fora da meta -> Moderado (amarelo).
+- tapOn:
+    id: "visita-paSistolica"
+- inputText: "150"
+- tapOn:
+    id: "visita-paDiastolica"
+- inputText: "95"
+# Toca no título da seção para dispensar o teclado.
+- tapOn:
+    text: "Sinais vitais"
+- scrollUntilVisible:
+    element:
+      id: "btn-salvar-visita"
+    direction: DOWN
+- tapOn:
+    id: "btn-salvar-visita"
+# Volta ao detalhe: risco classificado como Moderado.
+- extendedWaitUntil:
+    visible:
+      id: "detalhe-risco"
+    timeout: 30000
+- assertVisible:
+    text: "Moderado"

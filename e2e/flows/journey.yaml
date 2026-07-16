@@ -1,0 +1,10 @@
+# Jornada e2e completa do módulo de coleta do CardioRemoto.
+# Executa os subfluxos em sequência, compartilhando o mesmo estado do app.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: _login.yaml       # RF001 — login
+- runFlow: _cadastro.yaml    # RF002 — cadastrar paciente
+- runFlow: _visita.yaml      # RF005 — inserir visita + classificação de risco
+- runFlow: _evolucao.yaml    # RF006 — evolução (gráfico + tabela)
+- runFlow: _filtro.yaml      # RF003/RF004 — filtro por risco + ordenação
+- runFlow: _sync.yaml        # RF007 — sincronização com o banco central

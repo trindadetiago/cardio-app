@@ -5,6 +5,25 @@ Stack: Expo + React Native + TypeScript + Drizzle/op-sqlite.
 
 ---
 
+## Status (atualizado 2026-07-15)
+
+Todos os requisitos funcionais (RF001–RF007) e não-funcionais (RFN001/RFN002) do
+módulo de coleta estão implementados. O projeto foi reorganizado como **monorepo**
+(npm workspaces): `apps/mobile` (app), `apps/backend` (banco central de sincronização)
+e `packages/shared` (lógica de domínio pura). Ver `README.md`.
+
+- Sprints 0–3: ✅ (auth, cadastro, visita) — já existiam
+- Sprint 4 (risco + prioridade de visita): ✅ `packages/shared/src/risco.ts`, `visita-prioridade.ts`
+- Sprint 5 (evolução: tabela + gráfico small multiples): ✅
+- Sprint 6 (sincronização + backend): ✅ contrato push/pull LWW, sync manual e passiva
+- Sprint 7 (responsividade): ✅ breakpoints + conteúdo centralizado em tablet
+- Testes: 27 testes unitários (domínio + backend) + e2e Maestro (jornada completa no iOS Simulator, verde)
+- Sprint 8 (segurança/LGPD): parcial — hash de senha implementado; JWT/SQLCipher/LGPD seguem como trabalho futuro
+
+Como rodar: `npm test` (unit) e `npm run test:e2e` (Maestro no simulador).
+
+---
+
 ## 1. Objetivo do projeto
 
 Construir o **modulo de coleta** do CardioRemoto: app mobile usado por agentes de

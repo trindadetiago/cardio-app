@@ -1,0 +1,22 @@
+# Login do agente de saúde (RF001 / UC01).
+appId: com.anonymous.cardio-remoto
+---
+- launchApp:
+    clearState: true
+# Aguarda migração + seed do banco e a tela de login aparecer.
+- extendedWaitUntil:
+    visible:
+      id: "input-email"
+    timeout: 60000
+- tapOn:
+    id: "input-email"
+- inputText: "admin@cardio.local"
+- tapOn:
+    id: "input-senha"
+- inputText: "admin123"
+- tapOn:
+    id: "btn-entrar"
+- extendedWaitUntil:
+    visible:
+      id: "pacientes-title"
+    timeout: 20000

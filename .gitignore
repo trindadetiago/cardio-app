@@ -38,6 +38,12 @@ yarn-error.*
 
 app-example
 
-# generated native folders
-/ios
-/android
+# generated native folders (Expo prebuild)
+apps/mobile/ios/
+apps/mobile/android/
+
+# backend central database (generated)
+apps/backend/data/
+
+# maestro debug output
+.maestro/tests/

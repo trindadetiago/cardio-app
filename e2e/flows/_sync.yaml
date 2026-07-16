@@ -1,0 +1,16 @@
+# Sincronizar dados manualmente com o banco central (RF007 / UC07).
+appId: com.anonymous.cardio-remoto
+---
+- tapOn:
+    id: "tab-sync"
+- extendedWaitUntil:
+    visible:
+      id: "btn-sincronizar"
+    timeout: 30000
+- tapOn:
+    id: "btn-sincronizar"
+# Deve concluir com sucesso (backend em execução durante o e2e).
+- extendedWaitUntil:
+    visible:
+      id: "sync-result"
+    timeout: 30000
