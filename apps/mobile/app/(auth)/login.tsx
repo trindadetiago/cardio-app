@@ -1,21 +1,15 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { z } from 'zod';
 
+import { Button, Field, Input, Txt } from '@/components/ui/kit';
 import { getLockoutRemainingMs } from '@/src/features/auth/attempts-store';
 import { useAuth } from '@/src/features/auth/auth-context';
+import { colors, radius, spacing } from '@/src/theme/tokens';
 
 const schema = z.object({
   email: z.string().trim().min(1, 'Informe o e-mail').email('E-mail inválido'),
@@ -44,9 +38,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (lockoutMs <= 0) return;
-    const interval = setInterval(() => {
-      setLockoutMs((ms) => Math.max(0, ms - 1000));
-    }, 1000);
+    const interval = setInterval(() => setLockoutMs((ms) => Math.max(0, ms - 1000)), 1000);
     return () => clearInterval(interval);
   }, [lockoutMs]);
 
@@ -56,7 +48,7 @@ export default function LoginScreen() {
     if (result.ok) return;
     if (result.reason === 'locked') {
       setLockoutMs(result.lockedUntilMs);
-      setSubmitError(`Muitas tentativas. Tente novamente em ${formatRemaining(result.lockedUntilMs)}.`);
+      setSubmitError(`Muitas tentativas. Tente em ${formatRemaining(result.lockedUntilMs)}.`);
     } else {
       setSubmitError(
         result.attemptsLeft > 0
@@ -76,8 +68,13 @@ export default function LoginScreen() {
         style={styles.flex}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.title}>CardioRemoto</Text>
-            <Text style={styles.subtitle}>Acesso do agente de saúde</Text>
+            <View style={styles.logo}>
+              <MaterialCommunityIcons name="heart-pulse" size={34} color={colors.onPrimary} />
+            </View>
+            <Txt variant="h1">CardioRemoto</Txt>
+            <Txt variant="caption" style={styles.subtitle}>
+              Monitoramento de pacientes cardiovasculares
+            </Txt>
           </View>
 
           <View style={styles.form}>
@@ -86,12 +83,12 @@ export default function LoginScreen() {
                 control={control}
                 name="email"
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextInput
+                  <Input
                     testID="input-email"
-                    style={styles.input}
                     autoCapitalize="none"
                     autoComplete="email"
                     keyboardType="email-address"
+                    textContentType="emailAddress"
                     placeholder="agente@exemplo.com"
                     value={value}
                     onChangeText={onChange}
@@ -107,10 +104,10 @@ export default function LoginScreen() {
                 control={control}
                 name="senha"
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextInput
+                  <Input
                     testID="input-senha"
-                    style={styles.input}
                     secureTextEntry
+                    textContentType="password"
                     placeholder="••••••••"
                     value={value}
                     onChangeText={onChange}
@@ -122,90 +119,63 @@ export default function LoginScreen() {
             </Field>
 
             {locked && (
-              <Text style={styles.errorText}>
-                Bloqueado. Tente novamente em {formatRemaining(lockoutMs)}.
-              </Text>
+              <Txt variant="caption" color={colors.danger}>
+                Bloqueado. Tente em {formatRemaining(lockoutMs)}.
+              </Txt>
             )}
-            {submitError && !locked && <Text style={styles.errorText}>{submitError}</Text>}
+            {submitError && !locked && (
+              <Txt variant="caption" color={colors.danger}>
+                {submitError}
+              </Txt>
+            )}
 
-            <Pressable
+            <Button
               testID="btn-entrar"
-              accessibilityRole="button"
-              style={[styles.button, disabled && styles.buttonDisabled]}
+              title="Entrar"
               onPress={onSubmit}
-              disabled={disabled}>
-              {isSubmitting ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Entrar</Text>
-              )}
-            </Pressable>
+              loading={isSubmitting}
+              disabled={disabled}
+              style={styles.submit}
+            />
           </View>
+
+          <Txt variant="caption" style={styles.footer}>
+            Ecossistema mare.IA · Hospital Universitário
+          </Txt>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
-      {children}
-      {error && <Text style={styles.errorText}>{error}</Text>}
-    </View>
-  );
-}
-
 function formatRemaining(ms: number): string {
-  const totalSeconds = Math.ceil(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const total = Math.ceil(ms / 1000);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
+  safe: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingHorizontal: spacing.xxl,
     justifyContent: 'center',
-    gap: 32,
+    gap: spacing.xxxl,
   },
-  header: { alignItems: 'center', gap: 4 },
-  title: { fontSize: 28, fontWeight: '700' },
-  subtitle: { fontSize: 14, color: '#666' },
-  form: { gap: 16 },
-  field: { gap: 6 },
-  label: { fontSize: 14, fontWeight: '500' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
-    minHeight: 48,
-  },
-  errorText: { color: '#b00020', fontSize: 13 },
-  button: {
-    backgroundColor: '#0a7ea4',
-    paddingVertical: 14,
-    borderRadius: 8,
+  header: { alignItems: 'center', gap: spacing.sm },
+  logo: {
+    width: 72,
+    height: 72,
+    borderRadius: radius.xl,
+    backgroundColor: colors.primary,
     alignItems: 'center',
-    minHeight: 48,
     justifyContent: 'center',
+    marginBottom: spacing.sm,
   },
-  buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  subtitle: { textAlign: 'center' },
+  form: { gap: spacing.lg },
+  submit: { marginTop: spacing.sm },
+  footer: { textAlign: 'center', position: 'absolute', bottom: spacing.xl, alignSelf: 'center' },
 });

@@ -1,4 +1,11 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import {
+  Figtree_400Regular,
+  Figtree_500Medium,
+  Figtree_600SemiBold,
+  Figtree_700Bold,
+  useFonts,
+} from '@expo-google-fonts/figtree';
+import { DefaultTheme, ThemeProvider, type Theme } from '@react-navigation/native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -6,31 +13,50 @@ import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useDbMigrations } from '@/src/db/use-db-migrations';
 import { AuthProvider, useAuth } from '@/src/features/auth/auth-context';
 import { queryClient } from '@/src/lib/query-client';
+import { colors, fontFamily, fontSize } from '@/src/theme/tokens';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+const navTheme: Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: colors.primary,
+    background: colors.background,
+    card: colors.surface,
+    text: colors.text,
+    border: colors.border,
+  },
+};
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const { success, error } = useDbMigrations();
+  const [fontsLoaded] = useFonts({
+    Figtree_400Regular,
+    Figtree_500Medium,
+    Figtree_600SemiBold,
+    Figtree_700Bold,
+  });
+
+  const ready = success && fontsLoaded;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={navTheme}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider enabled={success}>
           {error ? (
             <CenteredMessage text={`Erro ao iniciar banco: ${error.message}`} />
-          ) : !success ? (
+          ) : !ready ? (
             <CenteredLoader text="Preparando dados…" />
           ) : (
             <RootStack />
           )}
-          <StatusBar style="auto" />
+          <StatusBar style="dark" />
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
@@ -55,16 +81,20 @@ function RootStack() {
   if (loading) return <CenteredLoader text="Carregando…" />;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        headerTitleStyle: { fontFamily: fontFamily.semibold, color: colors.text },
+        headerStyle: { backgroundColor: colors.surface },
+        headerTintColor: colors.primary,
+        headerShadowVisible: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}>
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen
         name="pacientes/novo"
-        options={{
-          presentation: 'modal',
-          headerShown: true,
-          title: 'Novo paciente',
-        }}
+        options={{ presentation: 'modal', headerShown: true, title: 'Novo paciente' }}
       />
       <Stack.Screen
         name="pacientes/[id]/index"
@@ -76,11 +106,7 @@ function RootStack() {
       />
       <Stack.Screen
         name="pacientes/[id]/visitas/nova"
-        options={{
-          presentation: 'modal',
-          headerShown: true,
-          title: 'Nova visita',
-        }}
+        options={{ presentation: 'modal', headerShown: true, title: 'Nova visita' }}
       />
     </Stack>
   );
@@ -89,7 +115,7 @@ function RootStack() {
 function CenteredLoader({ text }: { text: string }) {
   return (
     <View style={styles.center}>
-      <ActivityIndicator />
+      <ActivityIndicator color={colors.primary} />
       <Text style={styles.muted}>{text}</Text>
     </View>
   );
@@ -110,7 +136,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
     padding: 24,
+    backgroundColor: colors.background,
   },
-  muted: { color: '#666' },
-  error: { color: '#b00020', textAlign: 'center' },
+  muted: { color: colors.textSecondary, fontFamily: fontFamily.regular, fontSize: fontSize.md },
+  error: { color: colors.danger, textAlign: 'center', fontFamily: fontFamily.medium },
 });

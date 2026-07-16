@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@cardio/shared": "*",
+    "@expo-google-fonts/figtree": "^0.4.1",
     "@expo/vector-icons": "^15.0.3",
     "@hookform/resolvers": "^5.2.2",
     "@op-engineering/op-sqlite": "^16.1.0",

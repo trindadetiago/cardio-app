@@ -1,17 +1,9 @@
 import { useMemo, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter, type Href } from 'expo-router';
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Badge, Chip, Screen, Txt } from '@/components/ui/kit';
 import { RISCO_COR, RISCO_LABEL, type RiscoNivel } from '@cardio/shared';
 import { compararPrioridade, descreverPrioridade } from '@/src/lib/visita-prioridade';
 import { formatCpf } from '@/src/lib/cpf';
@@ -19,6 +11,7 @@ import { calcularIdade } from '@/src/lib/date';
 import { usePacientesComRisco } from '@/src/features/pacientes/pacientes-hooks';
 import type { PacienteComRisco } from '@/src/features/pacientes/paciente-risco';
 import { useResponsive } from '@/hooks/use-responsive';
+import { colors, elevation, radius, spacing } from '@/src/theme/tokens';
 
 const pacienteHref = (id: string): Href => `/pacientes/${id}` as Href;
 
@@ -43,101 +36,97 @@ export default function PacientesScreen() {
     const items = data ?? [];
     const filtrada = filtro === 'todos' ? items : items.filter((i) => i.risco.nivel === filtro);
     const ordenada = [...filtrada];
-    if (ordem === 'prioridade') {
-      ordenada.sort((a, b) => compararPrioridade(a.prioridade, b.prioridade));
-    } else {
-      ordenada.sort((a, b) => a.paciente.nome.localeCompare(b.paciente.nome, 'pt-BR'));
-    }
+    if (ordem === 'prioridade') ordenada.sort((a, b) => compararPrioridade(a.prioridade, b.prioridade));
+    else ordenada.sort((a, b) => a.paciente.nome.localeCompare(b.paciente.nome, 'pt-BR'));
     return ordenada;
   }, [data, filtro, ordem]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <Screen>
       <View style={styles.header}>
-        <Text style={styles.title} testID="pacientes-title">
-          Pacientes
-        </Text>
-        <Text style={styles.count} testID="pacientes-count">
-          {lista.length}
-        </Text>
-      </View>
+        <View style={styles.titleRow}>
+          <Txt variant="h1" testID="pacientes-title">
+            Pacientes
+          </Txt>
+          <View style={styles.countPill}>
+            <Txt variant="caption" color={colors.primaryDark} testID="pacientes-count" style={styles.countText}>
+              {lista.length}
+            </Txt>
+          </View>
+        </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chipsRow}>
-        {FILTROS.map((f) => {
-          const active = filtro === f.key;
-          const cor = f.key === 'todos' ? '#0a7ea4' : RISCO_COR[f.key];
-          return (
-            <Pressable
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipsRow}>
+          {FILTROS.map((f) => (
+            <Chip
               key={f.key}
               testID={`filtro-${f.key}`}
-              accessibilityRole="button"
-              accessibilityState={{ selected: active }}
+              label={f.label}
+              active={filtro === f.key}
               onPress={() => setFiltro(f.key)}
-              style={[styles.chip, active && { backgroundColor: cor, borderColor: cor }]}>
-              {f.key !== 'todos' && (
-                <View style={[styles.chipDot, { backgroundColor: active ? '#fff' : cor }]} />
-              )}
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>{f.label}</Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+              color={f.key === 'todos' ? colors.primary : RISCO_COR[f.key]}
+              dotColor={f.key === 'todos' ? undefined : RISCO_COR[f.key]}
+            />
+          ))}
+        </ScrollView>
 
-      <View style={styles.sortRow}>
-        <Text style={styles.sortLabel}>Ordenar por</Text>
-        <Pressable
-          testID="sort-toggle"
-          accessibilityRole="button"
-          onPress={() => setOrdem((o) => (o === 'prioridade' ? 'nome' : 'prioridade'))}
-          style={styles.sortButton}>
-          <Text style={styles.sortButtonText}>
-            {ordem === 'prioridade' ? 'Prioridade de visita' : 'Nome (A–Z)'}
-          </Text>
-        </Pressable>
+        <View style={styles.sortRow}>
+          <Txt variant="caption">Ordenar por</Txt>
+          <Pressable
+            testID="sort-toggle"
+            accessibilityRole="button"
+            onPress={() => setOrdem((o) => (o === 'prioridade' ? 'nome' : 'prioridade'))}
+            style={styles.sortButton}>
+            <Ionicons name="swap-vertical" size={15} color={colors.primaryDark} />
+            <Txt variant="caption" color={colors.primaryDark} style={styles.sortText}>
+              {ordem === 'prioridade' ? 'Prioridade de visita' : 'Nome (A–Z)'}
+            </Txt>
+          </Pressable>
+        </View>
       </View>
 
       {isLoading ? (
         <View style={styles.centered}>
-          <ActivityIndicator />
+          <ActivityIndicator color={colors.primary} />
         </View>
       ) : error ? (
         <View style={styles.centered}>
-          <Text style={styles.errorText}>Erro ao carregar: {error.message}</Text>
+          <Txt variant="body" color={colors.danger}>
+            Erro ao carregar: {error.message}
+          </Txt>
         </View>
       ) : (
         <FlatList
           data={lista}
           keyExtractor={(p) => p.paciente.id}
+          style={styles.list}
           contentContainerStyle={[
             lista.length === 0 ? styles.emptyContainer : styles.listContent,
             isTablet && styles.listContentTablet,
           ]}
           ListEmptyComponent={
             <View style={styles.emptyState} testID="pacientes-empty">
-              <Text style={styles.emptyTitle}>
-                {filtro === 'todos'
-                  ? 'Nenhum paciente cadastrado'
-                  : 'Nenhum paciente neste filtro'}
-              </Text>
-              <Text style={styles.emptyMuted}>
+              <View style={styles.emptyIcon}>
+                <Ionicons name="people-outline" size={30} color={colors.textMuted} />
+              </View>
+              <Txt variant="subtitle">
+                {filtro === 'todos' ? 'Nenhum paciente cadastrado' : 'Nenhum paciente neste filtro'}
+              </Txt>
+              <Txt variant="caption" style={styles.emptyMuted}>
                 {filtro === 'todos'
                   ? 'Toque no botão + para cadastrar o primeiro paciente.'
                   : 'Ajuste o filtro de risco para ver outros pacientes.'}
-              </Text>
+              </Txt>
             </View>
           }
           renderItem={({ item, index }) => (
-            <PacienteRow
-              index={index}
-              item={item}
-              onPress={() => router.push(pacienteHref(item.paciente.id))}
-            />
+            <PacienteRow index={index} item={item} onPress={() => router.push(pacienteHref(item.paciente.id))} />
           )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor={colors.primary} />
+          }
         />
       )}
 
@@ -145,23 +134,15 @@ export default function PacientesScreen() {
         testID="fab-novo-paciente"
         accessibilityRole="button"
         accessibilityLabel="Cadastrar paciente"
-        style={styles.fab}
+        style={({ pressed }) => [styles.fab, pressed && { opacity: 0.9 }]}
         onPress={() => router.push('/pacientes/novo' as Href)}>
-        <Text style={styles.fabText}>+</Text>
+        <Ionicons name="add" size={30} color={colors.onPrimary} />
       </Pressable>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
-function PacienteRow({
-  item,
-  index,
-  onPress,
-}: {
-  item: PacienteComRisco;
-  index: number;
-  onPress: () => void;
-}) {
+function PacienteRow({ item, index, onPress }: { item: PacienteComRisco; index: number; onPress: () => void }) {
   const { paciente, risco, prioridade } = item;
   const idade = calcularIdade(paciente.dataNascimento);
   const cor = RISCO_COR[risco.nivel];
@@ -170,121 +151,102 @@ function PacienteRow({
       testID={`paciente-row-${index}`}
       accessibilityRole="button"
       onPress={onPress}
-      style={styles.row}>
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}>
       <View style={[styles.riscoBar, { backgroundColor: cor }]} testID={`risco-${risco.nivel}`} />
       <View style={styles.rowMain}>
-        <Text style={styles.rowName}>{paciente.nome}</Text>
-        <Text style={styles.rowMeta}>
+        <Txt variant="subtitle" numberOfLines={1}>
+          {paciente.nome}
+        </Txt>
+        <Txt variant="caption">
           {formatCpf(paciente.cpf)} · {paciente.sexo} · {idade ?? '?'} anos
-        </Text>
+        </Txt>
         <View style={styles.badgeRow}>
-          <View style={[styles.badge, { backgroundColor: `${cor}1a`, borderColor: cor }]}>
-            <View style={[styles.badgeDot, { backgroundColor: cor }]} />
-            <Text style={[styles.badgeText, { color: cor }]}>{RISCO_LABEL[risco.nivel]}</Text>
+          <Badge label={RISCO_LABEL[risco.nivel]} color={cor} />
+          <View style={styles.prioridade}>
+            <Ionicons
+              name="calendar-outline"
+              size={13}
+              color={prioridade.atrasada ? colors.danger : colors.textMuted}
+            />
+            <Txt variant="caption" color={prioridade.atrasada ? colors.danger : colors.textSecondary}>
+              {descreverPrioridade(prioridade)}
+            </Txt>
           </View>
-          <Text style={[styles.prioridade, prioridade.atrasada && styles.prioridadeAtrasada]}>
-            {descreverPrioridade(prioridade)}
-          </Text>
         </View>
       </View>
+      <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
-  header: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
-  },
-  title: { fontSize: 24, fontWeight: '700' },
-  count: { fontSize: 14, color: '#666' },
-  chipsRow: { paddingHorizontal: 24, gap: 8, paddingVertical: 4 },
-  chip: {
-    flexDirection: 'row',
+  header: { paddingHorizontal: spacing.xxl, paddingTop: spacing.md, gap: spacing.md },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  countPill: {
+    backgroundColor: colors.primaryTint,
+    borderRadius: radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    minWidth: 28,
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    minHeight: 36,
   },
-  chipDot: { width: 8, height: 8, borderRadius: 4 },
-  chipText: { fontSize: 14, color: '#333', fontWeight: '500' },
-  chipTextActive: { color: '#fff' },
-  sortRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 24,
-    paddingTop: 8,
-    paddingBottom: 4,
-  },
-  sortLabel: { fontSize: 13, color: '#666' },
+  countText: { fontVariant: ['tabular-nums'] },
+  chipsRow: { gap: spacing.sm, paddingVertical: spacing.xs, paddingRight: spacing.xxl },
+  sortRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   sortButton: {
-    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.md,
     paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#eef3f6',
+    borderRadius: radius.sm,
+    backgroundColor: colors.primaryTint,
     minHeight: 32,
-    justifyContent: 'center',
   },
-  sortButtonText: { fontSize: 13, fontWeight: '600', color: '#0a7ea4' },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  errorText: { color: '#b00020' },
-  listContent: { paddingBottom: 96 },
+  sortText: { fontWeight: '600' },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxl },
+  list: { flex: 1 },
+  listContent: { padding: spacing.lg, gap: spacing.md, paddingBottom: 110 },
   listContentTablet: { maxWidth: 720, width: '100%', alignSelf: 'center' },
-  emptyContainer: { flexGrow: 1, justifyContent: 'center', padding: 24 },
-  emptyState: { alignItems: 'center', gap: 8 },
-  emptyTitle: { fontSize: 16, fontWeight: '600' },
-  emptyMuted: { fontSize: 14, color: '#666', textAlign: 'center' },
+  emptyContainer: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xxl },
+  emptyState: { alignItems: 'center', gap: spacing.sm },
+  emptyIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xs,
+  },
+  emptyMuted: { textAlign: 'center', maxWidth: 260 },
   row: {
-    paddingVertical: 14,
-    paddingHorizontal: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-  },
-  riscoBar: { width: 4, alignSelf: 'stretch', borderRadius: 2, minHeight: 44 },
-  rowMain: { flex: 1, gap: 4 },
-  rowName: { fontSize: 16, fontWeight: '500' },
-  rowMeta: { fontSize: 13, color: '#666' },
-  badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2, flexWrap: 'wrap' },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
     borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.md,
+    paddingRight: spacing.sm,
+    ...elevation.card,
   },
-  badgeDot: { width: 7, height: 7, borderRadius: 4 },
-  badgeText: { fontSize: 12, fontWeight: '600' },
-  prioridade: { fontSize: 12, color: '#666' },
-  prioridadeAtrasada: { color: '#b00020', fontWeight: '600' },
-  separator: { height: 1, backgroundColor: '#eee', marginHorizontal: 24 },
+  rowPressed: { backgroundColor: colors.surfaceAlt },
+  riscoBar: { width: 4, alignSelf: 'stretch', borderRadius: 2, minHeight: 52 },
+  rowMain: { flex: 1, gap: 3 },
+  badgeRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 2, flexWrap: 'wrap' },
+  prioridade: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   fab: {
     position: 'absolute',
-    right: 24,
-    bottom: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#0a7ea4',
+    right: spacing.xxl,
+    bottom: spacing.xxl,
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    ...elevation.fab,
   },
-  fabText: { color: '#fff', fontSize: 28, lineHeight: 30, fontWeight: '300' },
 });

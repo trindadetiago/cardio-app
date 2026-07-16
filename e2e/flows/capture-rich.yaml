@@ -1,0 +1,22 @@
+# Recaptura as telas que dependem de dados ricos (lista, filtro, detalhe, evolução).
+appId: com.anonymous.cardio-remoto
+---
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/02-pacientes
+
+# Lista filtrada por Moderado
+- tapOn: { id: 'filtro-amarelo' }
+- takeScreenshot: docs/screenshots/03-lista-filtro
+- tapOn: { id: 'filtro-todos' }
+
+# Detalhe (primeiro da lista) + evolução rica (3 visitas com todas as métricas)
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'detalhe-risco' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/04-detalhe
+- tapOn: { id: 'btn-evolucao' }
+- extendedWaitUntil: { visible: { id: 'evolucao-grafico' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/05-evolucao-grafico
+- tapOn: { text: 'Tabela' }
+- extendedWaitUntil: { visible: { id: 'evolucao-tabela' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/06-evolucao-tabela

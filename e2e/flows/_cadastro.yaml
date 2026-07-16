@@ -16,11 +16,9 @@ appId: com.anonymous.cardio-remoto
 - tapOn:
     id: "input-nascimento"
 - inputText: "15031990"
-# Toca num texto estático da seção para dispensar o teclado.
-- tapOn:
-    text: "Fatores de risco"
 - tapOn:
     id: "sexo-masculino"
+# O scroll (keyboardDismissMode on-drag) dispensa o teclado e revela o botão.
 - scrollUntilVisible:
     element:
       id: "btn-salvar-paciente"

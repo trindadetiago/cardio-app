@@ -1,0 +1,69 @@
+# Captura de telas para o README/pitch (não é teste). Requer dados do screenshots-setup.
+appId: com.anonymous.cardio-remoto
+---
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/02-pacientes
+
+# Lista filtrada por Grave
+- tapOn: { id: 'filtro-vermelho' }
+- takeScreenshot: docs/screenshots/03-lista-filtro
+- tapOn: { id: 'filtro-todos' }
+
+# Detalhe (Maria = row 1, Moderado, 3 visitas)
+- tapOn: { id: 'paciente-row-1' }
+- extendedWaitUntil: { visible: { id: 'detalhe-risco' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/04-detalhe
+
+# Evolução: gráfico + tabela
+- tapOn: { id: 'btn-evolucao' }
+- extendedWaitUntil: { visible: { id: 'evolucao-grafico' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/05-evolucao-grafico
+- tapOn: { text: 'Tabela' }
+- extendedWaitUntil: { visible: { id: 'evolucao-tabela' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/06-evolucao-tabela
+
+# Nova visita (com IMC calculado + alerta de PA)
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- tapOn: { id: 'paciente-row-1' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-paSistolica' }, timeout: 30000 }
+- tapOn: { id: 'visita-peso' }
+- inputText: '78'
+- tapOn: { id: 'visita-altura' }
+- inputText: '1.72'
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '150'
+- tapOn: { id: 'visita-paDiastolica' }
+- inputText: '95'
+- swipe: { start: '50%,60%', end: '50%,42%' }
+- takeScreenshot: docs/screenshots/07-nova-visita
+
+# Novo paciente (formulário)
+- launchApp
+- extendedWaitUntil: { visible: { id: 'fab-novo-paciente' }, timeout: 30000 }
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/08-novo-paciente
+
+# Sincronização (com resultado)
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- tapOn: { id: 'tab-sync' }
+- extendedWaitUntil: { visible: { id: 'btn-sincronizar' }, timeout: 30000 }
+- tapOn: { id: 'btn-sincronizar' }
+- extendedWaitUntil: { visible: { id: 'sync-result' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/09-sync
+
+# Perfil
+- tapOn: { id: 'tab-perfil' }
+- extendedWaitUntil: { visible: { text: 'Agente de saúde' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/10-perfil
+
+# Logout -> Login
+- tapOn: { text: 'Sair' }
+- tapOn: { text: 'Sair' }
+- extendedWaitUntil: { visible: { id: 'input-email' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/01-login

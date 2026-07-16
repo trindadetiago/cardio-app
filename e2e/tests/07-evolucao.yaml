@@ -1,0 +1,17 @@
+# RF006 — evolução: gráfico, tabela e alternância de métrica.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- runFlow: ../flows/_cadastro.yaml
+- runFlow: ../flows/_visita.yaml
+- tapOn: { id: 'btn-evolucao' }
+- extendedWaitUntil: { visible: { id: 'evolucao-grafico' }, timeout: 30000 }
+# Alterna para tabela e volta
+- tapOn: { text: 'Tabela' }
+- assertVisible: { id: 'evolucao-tabela' }
+- tapOn: { text: 'Gráfico' }
+- assertVisible: { id: 'evolucao-grafico' }
+# Oculta a métrica de PA sistólica (chip) e mostra de novo
+- tapOn: { id: 'metrica-paSistolica' }
+- tapOn: { id: 'metrica-paSistolica' }
+- assertVisible: { id: 'evolucao-grafico' }

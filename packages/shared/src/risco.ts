@@ -119,10 +119,10 @@ export function classificarRisco(
 }
 
 export const RISCO_COR: Record<RiscoNivel, string> = {
-  verde: '#2e9e5b',
-  amarelo: '#e8a93b',
-  vermelho: '#b00020',
-  sem_dados: '#9aa5ad',
+  verde: '#059669',
+  amarelo: '#D97706',
+  vermelho: '#DC2626',
+  sem_dados: '#64748B',
 };
 
 export const RISCO_LABEL: Record<RiscoNivel, string> = {

@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter, type Href } from 'expo-router';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { RISCO_COR, RISCO_LABEL } from '@cardio/shared';
+import { Button, InfoRow, SectionCard, Txt } from '@/components/ui/kit';
 import { usePaciente } from '@/src/features/pacientes/pacientes-hooks';
 import { avaliarPaciente } from '@/src/features/pacientes/paciente-risco';
 import { useVisitasByPaciente } from '@/src/features/visitas/visitas-hooks';
@@ -10,6 +12,7 @@ import { useResponsive } from '@/hooks/use-responsive';
 import { formatCpf } from '@/src/lib/cpf';
 import { calcularIdade, formatIsoToBR } from '@/src/lib/date';
 import { descreverPrioridade } from '@/src/lib/visita-prioridade';
+import { colors, radius, spacing } from '@/src/theme/tokens';
 
 export default function PacienteDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,7 +23,7 @@ export default function PacienteDetailScreen() {
 
   const avaliacao = useMemo(() => {
     if (!paciente) return null;
-    const ultima = visitas?.[0] ?? null; // visitas vêm ordenadas por data desc
+    const ultima = visitas?.[0] ?? null;
     return avaliarPaciente(
       paciente,
       ultima
@@ -38,7 +41,7 @@ export default function PacienteDetailScreen() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -46,57 +49,65 @@ export default function PacienteDetailScreen() {
   if (error || !paciente) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>
+        <Txt variant="body" color={colors.danger}>
           {error ? `Erro: ${error.message}` : 'Paciente não encontrado'}
-        </Text>
+        </Txt>
       </View>
     );
   }
 
   const idade = calcularIdade(paciente.dataNascimento);
   const sexoLabel = paciente.sexo === 'M' ? 'Masculino' : 'Feminino';
-  const cor = avaliacao ? RISCO_COR[avaliacao.risco.nivel] : '#9aa5ad';
+  const cor = avaliacao ? RISCO_COR[avaliacao.risco.nivel] : colors.semDados;
 
   return (
     <>
       <Stack.Screen options={{ title: paciente.nome }} />
-      <ScrollView contentContainerStyle={[styles.container, isTablet && styles.containerTablet]}>
+      <ScrollView
+        style={styles.flex}
+        contentContainerStyle={[styles.container, isTablet && styles.containerTablet]}>
         {avaliacao && (
-          <View style={[styles.riscoCard, { borderColor: cor, backgroundColor: `${cor}12` }]}>
+          <View style={[styles.riscoCard, { borderColor: `${cor}55`, backgroundColor: `${cor}10` }]}>
             <View style={styles.riscoHeader}>
               <View style={[styles.riscoDot, { backgroundColor: cor }]} />
-              <Text style={[styles.riscoTitulo, { color: cor }]} testID="detalhe-risco">
+              <Txt variant="subtitle" color={cor} testID="detalhe-risco">
                 {RISCO_LABEL[avaliacao.risco.nivel]}
-              </Text>
+              </Txt>
             </View>
-            <Text style={styles.riscoMotivo}>{avaliacao.risco.motivo}</Text>
-            <Text style={styles.riscoPrioridade}>
-              Próxima visita: {descreverPrioridade(avaliacao.prioridade)}
-            </Text>
+            <Txt variant="caption" color={colors.textSecondary}>
+              {avaliacao.risco.motivo}
+            </Txt>
+            <View style={styles.riscoPrioridade}>
+              <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
+              <Txt variant="caption" color={colors.textSecondary}>
+                Próxima visita: {descreverPrioridade(avaliacao.prioridade)}
+              </Txt>
+            </View>
           </View>
         )}
 
-        <Section title="Dados do paciente">
-          <Row label="CPF" value={formatCpf(paciente.cpf)} />
-          <Row
+        <SectionCard title="Dados do paciente">
+          <InfoRow first label="CPF" value={formatCpf(paciente.cpf)} />
+          <InfoRow
             label="Nascimento"
             value={`${formatIsoToBR(paciente.dataNascimento)}${idade != null ? ` (${idade} anos)` : ''}`}
           />
-          <Row label="Sexo" value={sexoLabel} />
-        </Section>
+          <InfoRow label="Sexo" value={sexoLabel} />
+        </SectionCard>
 
-        <Section title="Fatores de risco">
-          <Row label="Tabagismo" value={paciente.tabagismo ? 'Sim' : 'Não'} />
-          <Row label="Atividade física" value={paciente.atividadeFisica ? 'Sim' : 'Não'} />
-          <Row label="Usa estatina" value={paciente.estatina ? 'Sim' : 'Não'} />
-          <Row label="Histórico de evento CV" value={paciente.historicoCv ? 'Sim' : 'Não'} />
+        <SectionCard title="Fatores de risco">
+          <InfoRow first label="Tabagismo" value={paciente.tabagismo ? 'Sim' : 'Não'} />
+          <InfoRow label="Atividade física" value={paciente.atividadeFisica ? 'Sim' : 'Não'} />
+          <InfoRow label="Usa estatina" value={paciente.estatina ? 'Sim' : 'Não'} />
+          <InfoRow label="Histórico de evento CV" value={paciente.historicoCv ? 'Sim' : 'Não'} />
           {paciente.historicoCv && paciente.dataEventoCv && (
-            <Row label="Data do evento" value={formatIsoToBR(paciente.dataEventoCv)} />
+            <InfoRow label="Data do evento" value={formatIsoToBR(paciente.dataEventoCv)} />
           )}
-        </Section>
+        </SectionCard>
 
-        <Section title="Visitas">
-          <Row
+        <SectionCard title="Visitas">
+          <InfoRow
+            first
             label="Última visita"
             value={
               paciente.visitaMaisRecente
@@ -104,92 +115,35 @@ export default function PacienteDetailScreen() {
                 : 'Sem visitas registradas'
             }
           />
-          <Row label="Total" value={String(visitas?.length ?? 0)} />
-        </Section>
+          <InfoRow label="Total" value={String(visitas?.length ?? 0)} />
+        </SectionCard>
 
-        <Pressable
-          testID="btn-nova-visita"
-          accessibilityRole="button"
-          style={styles.primaryButton}
-          onPress={() => router.push(`/pacientes/${paciente.id}/visitas/nova` as Href)}>
-          <Text style={styles.primaryButtonText}>Nova visita</Text>
-        </Pressable>
-
-        <Pressable
-          testID="btn-evolucao"
-          accessibilityRole="button"
-          style={styles.secondaryButton}
-          onPress={() => router.push(`/pacientes/${paciente.id}/evolucao` as Href)}>
-          <Text style={styles.secondaryButtonText}>Ver evolução</Text>
-        </Pressable>
+        <View style={styles.actions}>
+          <Button
+            testID="btn-nova-visita"
+            title="Nova visita"
+            onPress={() => router.push(`/pacientes/${paciente.id}/visitas/nova` as Href)}
+          />
+          <Button
+            testID="btn-evolucao"
+            title="Ver evolução"
+            variant="secondary"
+            onPress={() => router.push(`/pacientes/${paciente.id}/evolucao` as Href)}
+          />
+        </View>
       </ScrollView>
     </>
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.sectionBody}>{children}</View>
-    </View>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.row}>
-      <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: { padding: 24, gap: 20, paddingBottom: 48 },
+  flex: { flex: 1, backgroundColor: colors.background },
+  container: { padding: spacing.lg, gap: spacing.lg, paddingBottom: 48 },
   containerTablet: { maxWidth: 720, width: '100%', alignSelf: 'center' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  errorText: { color: '#b00020' },
-  riscoCard: { borderWidth: 1, borderRadius: 10, padding: 14, gap: 6 },
-  riscoHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxl, backgroundColor: colors.background },
+  riscoCard: { borderWidth: 1, borderRadius: radius.lg, padding: spacing.lg, gap: 6 },
+  riscoHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   riscoDot: { width: 12, height: 12, borderRadius: 6 },
-  riscoTitulo: { fontSize: 16, fontWeight: '700' },
-  riscoMotivo: { fontSize: 13, color: '#444' },
-  riscoPrioridade: { fontSize: 13, color: '#444', fontWeight: '500' },
-  section: { gap: 8 },
-  sectionTitle: { fontSize: 12, fontWeight: '600', color: '#666', textTransform: 'uppercase' },
-  sectionBody: {
-    borderWidth: 1,
-    borderColor: '#eee',
-    borderRadius: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#eee',
-    gap: 12,
-  },
-  rowLabel: { fontSize: 14, color: '#666' },
-  rowValue: { fontSize: 14, fontWeight: '500', flexShrink: 1, textAlign: 'right' },
-  primaryButton: {
-    backgroundColor: '#0a7ea4',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-  },
-  primaryButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  secondaryButton: {
-    backgroundColor: '#eef3f6',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-  },
-  secondaryButtonText: { color: '#0a7ea4', fontWeight: '600', fontSize: 16 },
+  riscoPrioridade: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  actions: { gap: spacing.md, marginTop: spacing.xs },
 });

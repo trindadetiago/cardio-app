@@ -1,0 +1,14 @@
+# Popula dados variados via painel de dev (apenas em build debug) para capturas.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: _login.yaml
+- tapOn: { id: 'tab-perfil' }
+- extendedWaitUntil: { visible: { text: 'Adicionar 10 pacientes fake' }, timeout: 30000 }
+- tapOn: { text: 'Adicionar 10 pacientes fake' }
+- extendedWaitUntil: { visible: { text: 'Pronto' }, timeout: 30000 }
+- tapOn: { text: 'OK' }
+- tapOn: { text: 'Adicionar 3 visitas por paciente' }
+- extendedWaitUntil: { visible: { text: 'Pronto' }, timeout: 30000 }
+- tapOn: { text: 'OK' }
+- tapOn: { id: 'tab-pacientes' }
+- extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 30000 }

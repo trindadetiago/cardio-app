@@ -1,0 +1,10 @@
+# RF001 — logout retorna à tela de login.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- tapOn: { id: 'tab-perfil' }
+- extendedWaitUntil: { visible: { text: 'Agente de saúde' }, timeout: 30000 }
+- tapOn: { text: 'Sair' }
+- extendedWaitUntil: { visible: { text: 'Deseja encerrar a sessão?' }, timeout: 10000 }
+- tapOn: { text: 'Encerrar sessão' }
+- extendedWaitUntil: { visible: { id: 'input-email' }, timeout: 30000 }

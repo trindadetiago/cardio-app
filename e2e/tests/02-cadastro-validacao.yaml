@@ -1,0 +1,15 @@
+# RF002 — validação do formulário de cadastro (campos obrigatórios + CPF inválido).
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+# Submete vazio -> erros de validação
+- scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-paciente' }
+- assertVisible: 'CPF inválido'
+- assertVisible: 'Nome muito curto'
+# CPF inválido explícito
+- tapOn: { id: 'input-cpf' }
+- inputText: '12312312312'
+- assertVisible: 'CPF inválido'

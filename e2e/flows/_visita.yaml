@@ -21,9 +21,7 @@ appId: com.anonymous.cardio-remoto
 - tapOn:
     id: "visita-paDiastolica"
 - inputText: "95"
-# Toca no título da seção para dispensar o teclado.
-- tapOn:
-    text: "Sinais vitais"
+# O scroll (keyboardDismissMode on-drag) dispensa o teclado e revela o botão.
 - scrollUntilVisible:
     element:
       id: "btn-salvar-visita"

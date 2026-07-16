@@ -1,0 +1,13 @@
+# RF001 — login com credenciais inválidas mostra erro e conta tentativas.
+appId: com.anonymous.cardio-remoto
+---
+- launchApp: { clearState: true }
+- extendedWaitUntil: { visible: { id: 'input-email' }, timeout: 60000 }
+- tapOn: { id: 'input-email' }
+- inputText: 'admin@cardio.local'
+- tapOn: { id: 'input-senha' }
+- inputText: 'senha-errada'
+- tapOn: { id: 'btn-entrar' }
+- assertVisible: 'Credenciais inválidas.*'
+# Continua na tela de login
+- assertVisible: { id: 'btn-entrar' }

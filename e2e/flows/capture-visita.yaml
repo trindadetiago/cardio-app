@@ -1,0 +1,13 @@
+# Recaptura o formulário de nova visita mostrando o alerta de PA (valores inteiros).
+appId: com.anonymous.cardio-remoto
+---
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-paSistolica' }, timeout: 30000 }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '185'
+- swipe: { start: '50%,58%', end: '50%,44%' }
+- takeScreenshot: docs/screenshots/07-nova-visita

@@ -1,0 +1,17 @@
+# RF003/RF004 — filtro por risco e estado vazio.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- runFlow: ../flows/_cadastro.yaml
+- runFlow: ../flows/_visita.yaml
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+# Paciente é Moderado -> aparece em "Moderado"
+- tapOn: { id: 'filtro-amarelo' }
+- extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 10000 }
+# Não aparece em "Controlado" -> estado vazio do filtro
+- tapOn: { id: 'filtro-verde' }
+- extendedWaitUntil: { visible: { id: 'pacientes-empty' }, timeout: 10000 }
+# Volta para todos
+- tapOn: { id: 'filtro-todos' }
+- extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 10000 }

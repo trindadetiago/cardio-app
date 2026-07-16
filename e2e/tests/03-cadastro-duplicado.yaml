@@ -1,0 +1,18 @@
+# UC02 fluxo alternativo — CPF já cadastrado mostra alerta.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- runFlow: ../flows/_cadastro.yaml
+# Tenta cadastrar de novo com o mesmo CPF
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+- tapOn: { id: 'input-cpf' }
+- inputText: '52998224725'
+- tapOn: { id: 'input-nome' }
+- inputText: 'Outro Nome Qualquer'
+- tapOn: { id: 'input-nascimento' }
+- inputText: '10101990'
+- tapOn: { id: 'sexo-feminino' }
+- scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-paciente' }
+- assertVisible: 'Paciente já cadastrado'

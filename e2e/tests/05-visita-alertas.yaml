@@ -1,0 +1,26 @@
+# UC05 — valores críticos geram alertas visuais (PA, glicemia, LDL).
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- runFlow: ../flows/_cadastro.yaml
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-paSistolica' }, timeout: 30000 }
+# Crise hipertensiva: sistólica >= 180 (um único campo evita problema de foco)
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '185'
+- swipe: { start: '50%,58%', end: '50%,44%' }
+- assertVisible: 'Crise hipertensiva.*'
+# Glicemia grave (>=200)
+- scrollUntilVisible: { element: { id: 'visita-glicemiaJejum' }, direction: DOWN }
+- tapOn: { id: 'visita-glicemiaJejum' }
+- inputText: '260'
+- swipe: { start: '50%,58%', end: '50%,44%' }
+- assertVisible: 'Hiperglicemia grave.*'
+# LDL muito alto (>=190)
+- scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
+- tapOn: { id: 'visita-ldl' }
+- inputText: '210'
+- swipe: { start: '50%,58%', end: '50%,44%' }
+- assertVisible: 'LDL muito alto.*'

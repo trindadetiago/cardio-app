@@ -1,0 +1,15 @@
+# UC05 fluxo de exceção — salvar visita sem nenhum campo mostra erro.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- runFlow: ../flows/_cadastro.yaml
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-paSistolica' }, timeout: 30000 }
+# Salva sem preencher nenhuma medição
+- scrollUntilVisible: { element: { id: 'btn-salvar-visita' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-visita' }
+# O erro fica junto ao primeiro campo (topo) — rola até ele
+- scrollUntilVisible: { element: { text: 'Preencha ao menos um campo.*' }, direction: UP }
+- assertVisible: 'Preencha ao menos um campo.*'

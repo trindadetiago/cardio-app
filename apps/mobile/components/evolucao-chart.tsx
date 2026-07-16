@@ -4,6 +4,7 @@ import Svg, { Circle, Line, Polyline } from 'react-native-svg';
 
 import { formatIsoToBR } from '@/src/lib/date';
 import type { SerieMetrica } from '@/src/features/visitas/metricas';
+import { colors, fontFamily, fontSize } from '@/src/theme/tokens';
 
 const ROW_HEIGHT = 64;
 const PAD_Y = 10;
@@ -66,7 +67,7 @@ export function EvolucaoChart({ series }: { series: SerieMetrica[] }) {
                     y1={ROW_HEIGHT - 1}
                     x2={plotWidth}
                     y2={ROW_HEIGHT - 1}
-                    stroke="#eee"
+                    stroke={colors.border}
                     strokeWidth={1}
                   />
                   {s.pontos.length > 1 && (
@@ -106,11 +107,11 @@ const styles = StyleSheet.create({
   legend: { width: LEGEND_WIDTH, flexDirection: 'row', alignItems: 'center', gap: 6, paddingRight: 8 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendText: { flex: 1 },
-  legendLabel: { fontSize: 12, color: '#333', fontWeight: '500' },
-  legendValue: { fontSize: 12, color: '#666' },
+  legendLabel: { fontSize: fontSize.xs, color: colors.text, fontFamily: fontFamily.medium },
+  legendValue: { fontSize: fontSize.xs, color: colors.textSecondary, fontFamily: fontFamily.regular },
   plot: { flex: 1, height: ROW_HEIGHT },
   axis: { flexDirection: 'row' },
   axisSpacer: { width: LEGEND_WIDTH },
   axisDates: { flex: 1, flexDirection: 'row', justifyContent: 'space-between' },
-  axisText: { fontSize: 11, color: '#999' },
+  axisText: { fontSize: 11, color: colors.textMuted, fontFamily: fontFamily.regular },
 });

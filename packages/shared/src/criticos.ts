@@ -42,7 +42,7 @@ export function avaliarLdl(valor: number | null): ResultadoCritico {
 }
 
 export const SEVERIDADE_COR: Record<Severidade, string> = {
-  ok: '#ccc',
-  alerta: '#e8a93b',
-  critico: '#b00020',
+  ok: '#CBD5E1',
+  alerta: '#D97706',
+  critico: '#DC2626',
 };

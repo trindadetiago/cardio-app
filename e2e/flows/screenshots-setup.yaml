@@ -1,0 +1,162 @@
+# Popula o app com dados realistas para capturas (não é teste).
+# Ana = Controlado (verde), Maria = Moderado (3 visitas, evolução rica), José = Grave (vermelho).
+# Após digitar a data, um swipe dispensa o teclado (keyboardDismissMode on-drag) para
+# que os campos de PA recebam foco corretamente.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: _login.yaml
+
+# ===================== Ana Beatriz Costa (Controlado) =====================
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+- tapOn: { id: 'input-cpf' }
+- inputText: '11144477735'
+- tapOn: { id: 'input-nome' }
+- inputText: 'Ana Beatriz Costa'
+- tapOn: { id: 'input-nascimento' }
+- inputText: '22091985'
+- tapOn: { id: 'sexo-feminino' }
+- scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-paciente' }
+- extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 30000 }
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-data' }, timeout: 30000 }
+- tapOn: { id: 'visita-data' }
+- eraseText: 10
+- inputText: '15062026'
+- swipe: { start: '50%,55%', end: '50%,42%' }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '118'
+- tapOn: { id: 'visita-paDiastolica' }
+- inputText: '76'
+- scrollUntilVisible: { element: { id: 'visita-hba1c' }, direction: DOWN }
+- tapOn: { id: 'visita-hba1c' }
+- inputText: '5.6'
+- scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
+- tapOn: { id: 'visita-ldl' }
+- inputText: '104'
+- scrollUntilVisible: { element: { id: 'btn-salvar-visita' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-visita' }
+- extendedWaitUntil: { visible: { id: 'detalhe-risco' }, timeout: 30000 }
+
+# ===================== Maria Silva Santos (Moderado, 3 visitas) =====================
+- launchApp
+- extendedWaitUntil: { visible: { id: 'fab-novo-paciente' }, timeout: 30000 }
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+- tapOn: { id: 'input-cpf' }
+- inputText: '52998224725'
+- tapOn: { id: 'input-nome' }
+- inputText: 'Maria Silva Santos'
+- tapOn: { id: 'input-nascimento' }
+- inputText: '14071968'
+- tapOn: { id: 'sexo-feminino' }
+- scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-paciente' }
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+
+# Visita 1 (08/02/2026)
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-data' }, timeout: 30000 }
+- tapOn: { id: 'visita-data' }
+- eraseText: 10
+- inputText: '08022026'
+- swipe: { start: '50%,55%', end: '50%,42%' }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '132'
+- tapOn: { id: 'visita-paDiastolica' }
+- inputText: '84'
+- scrollUntilVisible: { element: { id: 'visita-glicemiaJejum' }, direction: DOWN }
+- tapOn: { id: 'visita-glicemiaJejum' }
+- inputText: '96'
+- scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
+- tapOn: { id: 'visita-ldl' }
+- inputText: '118'
+- scrollUntilVisible: { element: { id: 'btn-salvar-visita' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-visita' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+
+# Visita 2 (12/04/2026)
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-data' }, timeout: 30000 }
+- tapOn: { id: 'visita-data' }
+- eraseText: 10
+- inputText: '12042026'
+- swipe: { start: '50%,55%', end: '50%,42%' }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '150'
+- tapOn: { id: 'visita-paDiastolica' }
+- inputText: '94'
+- scrollUntilVisible: { element: { id: 'visita-glicemiaJejum' }, direction: DOWN }
+- tapOn: { id: 'visita-glicemiaJejum' }
+- inputText: '128'
+- scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
+- tapOn: { id: 'visita-ldl' }
+- inputText: '156'
+- scrollUntilVisible: { element: { id: 'btn-salvar-visita' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-visita' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+
+# Visita 3 (20/06/2026)
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-data' }, timeout: 30000 }
+- tapOn: { id: 'visita-data' }
+- eraseText: 10
+- inputText: '20062026'
+- swipe: { start: '50%,55%', end: '50%,42%' }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '138'
+- tapOn: { id: 'visita-paDiastolica' }
+- inputText: '86'
+- scrollUntilVisible: { element: { id: 'visita-glicemiaJejum' }, direction: DOWN }
+- tapOn: { id: 'visita-glicemiaJejum' }
+- inputText: '108'
+- scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
+- tapOn: { id: 'visita-ldl' }
+- inputText: '132'
+- scrollUntilVisible: { element: { id: 'btn-salvar-visita' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-visita' }
+- extendedWaitUntil: { visible: { id: 'detalhe-risco' }, timeout: 30000 }
+
+# ===================== José Carlos Nunes (Grave) =====================
+- launchApp
+- extendedWaitUntil: { visible: { id: 'fab-novo-paciente' }, timeout: 30000 }
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+- tapOn: { id: 'input-cpf' }
+- inputText: '12345678909'
+- tapOn: { id: 'input-nome' }
+- inputText: 'José Carlos Nunes'
+- tapOn: { id: 'input-nascimento' }
+- inputText: '03031959'
+- tapOn: { id: 'sexo-masculino' }
+- scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-paciente' }
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-data' }, timeout: 30000 }
+- tapOn: { id: 'visita-data' }
+- eraseText: 10
+- inputText: '18062026'
+- swipe: { start: '50%,55%', end: '50%,42%' }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '176'
+- tapOn: { id: 'visita-paDiastolica' }
+- inputText: '108'
+- scrollUntilVisible: { element: { id: 'visita-hba1c' }, direction: DOWN }
+- tapOn: { id: 'visita-hba1c' }
+- inputText: '8.6'
+- scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
+- tapOn: { id: 'visita-ldl' }
+- inputText: '204'
+- scrollUntilVisible: { element: { id: 'btn-salvar-visita' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-visita' }
+- extendedWaitUntil: { visible: { id: 'detalhe-risco' }, timeout: 30000 }
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
