@@ -3,11 +3,12 @@ import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { usePassiveSync } from '@/src/features/sync/sync-hooks';
+import { useAutoSync } from '@/src/features/sync/sync-hooks';
 import { colors, fontFamily } from '@/src/theme/tokens';
 
 export default function TabLayout() {
-  usePassiveSync();
+  // Sincronização automática, invisível ao usuário (sem aba dedicada).
+  useAutoSync();
 
   return (
     <Tabs
@@ -25,16 +26,6 @@ export default function TabLayout() {
           title: 'Pacientes',
           tabBarButtonTestID: 'tab-pacientes',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.2.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="sync"
-        options={{
-          title: 'Sync',
-          tabBarButtonTestID: 'tab-sync',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="arrow.triangle.2.circlepath" color={color} />
-          ),
         }}
       />
       <Tabs.Screen

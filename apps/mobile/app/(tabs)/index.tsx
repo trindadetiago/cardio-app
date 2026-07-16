@@ -4,6 +4,7 @@ import { useRouter, type Href } from 'expo-router';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Badge, Chip, Screen, Txt } from '@/components/ui/kit';
+import { SyncIndicator } from '@/components/sync-indicator';
 import { RISCO_COR, RISCO_LABEL, type RiscoNivel } from '@cardio/shared';
 import { compararPrioridade, descreverPrioridade } from '@/src/lib/visita-prioridade';
 import { formatCpf } from '@/src/lib/cpf';
@@ -45,14 +46,17 @@ export default function PacientesScreen() {
     <Screen>
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Txt variant="h1" testID="pacientes-title">
-            Pacientes
-          </Txt>
-          <View style={styles.countPill}>
-            <Txt variant="caption" color={colors.primaryDark} testID="pacientes-count" style={styles.countText}>
-              {lista.length}
+          <View style={styles.titleLeft}>
+            <Txt variant="h1" testID="pacientes-title">
+              Pacientes
             </Txt>
+            <View style={styles.countPill}>
+              <Txt variant="caption" color={colors.primaryDark} testID="pacientes-count" style={styles.countText}>
+                {lista.length}
+              </Txt>
+            </View>
           </View>
+          <SyncIndicator />
         </View>
 
         <ScrollView
@@ -181,7 +185,8 @@ function PacienteRow({ item, index, onPress }: { item: PacienteComRisco; index: 
 
 const styles = StyleSheet.create({
   header: { paddingHorizontal: spacing.xxl, paddingTop: spacing.md, gap: spacing.md },
-  titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
+  titleLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   countPill: {
     backgroundColor: colors.primaryTint,
     borderRadius: radius.pill,

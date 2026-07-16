@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useAuth } from '@/src/features/auth/auth-context';
+import { autoPush } from '@/src/features/sync/sync-manager';
 import type { PacienteFormValues } from './paciente-schema';
 import {
   createPaciente,
@@ -47,6 +48,7 @@ export function useCreatePaciente() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PACIENTES_QUERY_KEY });
+      autoPush(session?.agenteId);
     },
   });
 }

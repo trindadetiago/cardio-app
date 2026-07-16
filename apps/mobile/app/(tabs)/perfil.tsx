@@ -12,7 +12,12 @@ import {
   wipeTudoEReseedAgent,
 } from '@/src/db/dev-tools';
 import { useAuth } from '@/src/features/auth/auth-context';
+import { useOnlineStatus, usePendingCount, useSyncState } from '@/src/features/sync/sync-hooks';
+import { runSync, useSyncUi } from '@/src/features/sync/sync-manager';
+import type { SyncResult } from '@/src/features/sync/sync-service';
 import { useResponsive } from '@/hooks/use-responsive';
+import { API_BASE_URL } from '@/src/lib/api-config';
+import { formatIsoToBR } from '@/src/lib/date';
 import { colors, radius, spacing } from '@/src/theme/tokens';
 
 export default function PerfilScreen() {
@@ -59,11 +64,87 @@ export default function PerfilScreen() {
           </View>
         </Card>
 
+        <SyncSection />
+
         <Button title="Sair" variant="danger" onPress={confirmLogout} />
 
         {__DEV__ && <DevPanel />}
       </ScrollView>
     </Screen>
+  );
+}
+
+function SyncSection() {
+  const { session } = useAuth();
+  const syncing = useSyncUi((s) => s.syncing);
+  const online = useOnlineStatus().data !== false;
+  const pending = usePendingCount().data ?? 0;
+  const lastSyncAt = useSyncState().data?.lastSyncAt ?? null;
+  const [ultimo, setUltimo] = useState<SyncResult | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+
+  const onSync = async () => {
+    setErro(null);
+    setUltimo(null);
+    try {
+      setUltimo(await runSync(session?.agenteId));
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Falha na sincronização');
+    }
+  };
+
+  return (
+    <View style={styles.syncSection}>
+      <Txt variant="overline">Sincronização</Txt>
+      <Card style={styles.syncCard}>
+        <View style={styles.syncStatusRow}>
+          <View
+            testID="sync-status"
+            style={[styles.statusDot, { backgroundColor: online ? colors.accent : colors.danger }]}
+          />
+          <Txt variant="bodyMedium">{online ? 'Online' : 'Offline'}</Txt>
+          <View style={styles.flex1} />
+          <Txt variant="caption" testID="sync-pending">
+            {pending} pendente(s)
+          </Txt>
+        </View>
+        <View style={styles.syncMetaRow}>
+          <Ionicons name="time-outline" size={14} color={colors.textMuted} />
+          <Txt variant="caption">Última: {lastSyncAt ? formatIsoToBR(lastSyncAt) : '—'}</Txt>
+        </View>
+        <View style={styles.syncMetaRow}>
+          <Ionicons name="server-outline" size={14} color={colors.textMuted} />
+          <Txt variant="caption">{API_BASE_URL}</Txt>
+        </View>
+        <Button
+          testID="btn-sincronizar"
+          title="Sincronizar agora"
+          variant="secondary"
+          onPress={onSync}
+          loading={syncing}
+          disabled={!online}
+        />
+        {ultimo && (
+          <View testID="sync-result" style={styles.syncResultOk}>
+            <Ionicons name="checkmark-circle" size={16} color={colors.accent} />
+            <Txt variant="caption" color={colors.accent}>
+              Concluído · enviados {ultimo.pushed}, recebidos {ultimo.pulledPacientes}p/{ultimo.pulledVisitas}v
+            </Txt>
+          </View>
+        )}
+        {erro && (
+          <View testID="sync-error" style={styles.syncResultErr}>
+            <Ionicons name="alert-circle" size={16} color={colors.danger} />
+            <Txt variant="caption" color={colors.danger}>
+              {erro}
+            </Txt>
+          </View>
+        )}
+      </Card>
+      <Txt variant="caption" style={styles.syncHelp}>
+        A sincronização acontece sozinha ao salvar dados e ao reconectar. Use o botão só para forçar agora.
+      </Txt>
+    </View>
   );
 }
 
@@ -164,4 +245,27 @@ const styles = StyleSheet.create({
   },
   devSection: { gap: spacing.md, marginTop: spacing.lg },
   statsRow: { flexDirection: 'row', gap: spacing.sm },
+  flex1: { flex: 1 },
+  syncSection: { gap: spacing.sm },
+  syncCard: { gap: spacing.md },
+  syncStatusRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  statusDot: { width: 10, height: 10, borderRadius: 5 },
+  syncMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  syncResultOk: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    padding: spacing.sm,
+    borderRadius: radius.sm,
+    backgroundColor: colors.verdeTint,
+  },
+  syncResultErr: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    padding: spacing.sm,
+    borderRadius: radius.sm,
+    backgroundColor: colors.vermelhoTint,
+  },
+  syncHelp: { lineHeight: 18, marginLeft: spacing.xs },
 });

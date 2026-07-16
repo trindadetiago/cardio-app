@@ -1,9 +1,11 @@
 import NetInfo from '@react-native-community/netinfo';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
+import { AppState } from 'react-native';
 
 import { useAuth } from '@/src/features/auth/auth-context';
-import { getPendingCount, isOnline, sync } from './sync-service';
+import { autoPush, autoSync } from './sync-manager';
+import { getPendingCount, isOnline } from './sync-service';
 import { loadSyncState } from './sync-store';
 
 export const SYNC_PENDING_QUERY_KEY = ['sync', 'pending'] as const;
@@ -11,7 +13,7 @@ export const SYNC_STATE_QUERY_KEY = ['sync', 'state'] as const;
 export const SYNC_ONLINE_QUERY_KEY = ['sync', 'online'] as const;
 
 export function usePendingCount() {
-  return useQuery({ queryKey: SYNC_PENDING_QUERY_KEY, queryFn: getPendingCount });
+  return useQuery({ queryKey: SYNC_PENDING_QUERY_KEY, queryFn: getPendingCount, refetchInterval: 4000 });
 }
 
 export function useSyncState() {
@@ -19,46 +21,36 @@ export function useSyncState() {
 }
 
 export function useOnlineStatus() {
-  return useQuery({
-    queryKey: SYNC_ONLINE_QUERY_KEY,
-    queryFn: isOnline,
-    refetchInterval: 5000,
-  });
-}
-
-export function useSync() {
-  const queryClient = useQueryClient();
-  const { session } = useAuth();
-
-  return useMutation({
-    mutationFn: () => sync(session?.agenteId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pacientes'] });
-      queryClient.invalidateQueries({ queryKey: ['paciente'] });
-      queryClient.invalidateQueries({ queryKey: ['visitas'] });
-      queryClient.invalidateQueries({ queryKey: ['sync'] });
-      queryClient.invalidateQueries({ queryKey: ['dev-stats'] });
-    },
-  });
+  return useQuery({ queryKey: SYNC_ONLINE_QUERY_KEY, queryFn: isOnline, refetchInterval: 5000 });
 }
 
 /**
- * Sincronização passiva (RFN001): dispara um sync ao detectar que o dispositivo
- * recuperou a conexão. Deve ser montado uma única vez (ex.: no layout das abas).
+ * Motor de sincronização automática (RFN001). Montado uma vez na área autenticada:
+ *   - envia pendências ao montar e quando o app volta ao primeiro plano;
+ *   - faz sync completo ao recuperar a conexão.
+ * Assim a sincronização é invisível — o agente nunca precisa acioná-la.
  */
-export function usePassiveSync() {
-  const syncM = useSync();
-  const ref = useRef(syncM);
-  ref.current = syncM;
-  const wasOnline = useRef<boolean | null>(null);
+export function useAutoSync() {
+  const { session } = useAuth();
+  const agenteRef = useRef(session?.agenteId);
+  agenteRef.current = session?.agenteId;
 
+  // Envia pendências ao montar e ao voltar para o app.
   useEffect(() => {
+    autoPush(agenteRef.current);
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') autoPush(agenteRef.current);
+    });
+    return () => sub.remove();
+  }, []);
+
+  // Sync completo ao reconectar (transição offline -> online).
+  useEffect(() => {
+    let wasConnected: boolean | null = null;
     const unsubscribe = NetInfo.addEventListener((state) => {
-      const online = state.isConnected !== false;
-      if (wasOnline.current === false && online && !ref.current.isPending) {
-        ref.current.mutate();
-      }
-      wasOnline.current = online;
+      const connected = state.isConnected !== false;
+      if (wasConnected === false && connected) autoSync(agenteRef.current);
+      wasConnected = connected;
     });
     return () => unsubscribe();
   }, []);

@@ -47,21 +47,15 @@ o backend de sincronização (banco central) e um pacote de lógica de domínio 
       <b>Evolução — tabela</b><br><sub>Histórico por data</sub>
     </td>
     <td align="center" width="33%">
-      <img src="docs/screenshots/09-sync.png" width="240"><br>
-      <b>Sincronização</b><br><sub>Status online, pendências e envio ao banco central</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="33%">
       <img src="docs/screenshots/10-perfil.png" width="240"><br>
-      <b>Perfil</b><br><sub>Agente de saúde e logout</sub>
+      <b>Perfil e sincronização</b><br><sub>Sync automática; status e envio manual aqui</sub>
     </td>
-    <td width="33%"></td>
-    <td width="33%"></td>
   </tr>
 </table>
 
-> Capturas geradas no iOS Simulator (build Release) via Maestro (`e2e/flows/capture*.yaml`).
+> A sincronização é **automática** — sem aba dedicada. Um indicador discreto no topo da
+> lista mostra o estado (em dia / pendências / offline) e permite forçar um sync.
+> Capturas geradas no iOS Simulator via Maestro (`e2e/flows/capture*.yaml`).
 
 ## Estrutura
 
@@ -110,8 +104,8 @@ biblioteca de componentes reutilizáveis em `apps/mobile/components/ui/` (`Txt`,
 | RF004  | Ordenar por prioridade de visita             | `packages/shared/src/visita-prioridade.ts` |
 | RF005  | Inserir visita (IMC + alertas críticos)      | `apps/mobile/app/pacientes/[id]/visitas/nova.tsx` |
 | RF006  | Evolução (tabela + gráfico temporal)         | `apps/mobile/app/pacientes/[id]/evolucao.tsx` |
-| RF007  | Sincronização manual                         | `apps/mobile/src/features/sync` + `apps/backend` |
-| RFN001 | Offline-first + sync passiva                 | fila `sync_queue` + `usePassiveSync` |
+| RF007  | Sincronização (automática + manual)          | `apps/mobile/src/features/sync` + `apps/backend` |
+| RFN001 | Offline-first + sync automática              | fila `sync_queue` + `useAutoSync` |
 | RFN002 | Interface responsiva                         | `apps/mobile/hooks/use-responsive.ts` |
 
 ## Comandos
@@ -138,6 +132,11 @@ npm run lint
 ```
 
 ## Sincronização (contrato)
+
+A sincronização é **automática e invisível**: o app envia as pendências ao salvar dados,
+ao abrir e ao voltar para o primeiro plano, e faz um sync completo ao recuperar a conexão.
+Não há tela dedicada — apenas um indicador de status no topo da lista (e um botão de
+"forçar agora" no Perfil).
 
 O app mantém uma `sync_queue` local. O backend é um _document-store_ chaveado por
 `(tipo, id)` com resolução **last-write-wins** por `updatedAt` e um cursor monotônico

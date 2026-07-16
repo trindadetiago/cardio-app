@@ -52,7 +52,7 @@ export async function getPendingCount(): Promise<number> {
   return row?.n ?? 0;
 }
 
-async function pushPending(agenteId?: string): Promise<{ pushed: number }> {
+export async function pushPending(agenteId?: string): Promise<{ pushed: number }> {
   const pendentes = await db
     .select()
     .from(syncQueue)
