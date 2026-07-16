@@ -1,0 +1,11 @@
+# RFN001 — pull-to-refresh na lista dispara um sync completo sem quebrar a tela.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- runFlow: ../flows/_cadastro.yaml
+# Já estamos na lista com o paciente criado.
+- assertVisible: { id: 'paciente-row-0' }
+# Puxar para baixo (pull-to-refresh) -> sync completo.
+- swipe: { start: '50%,45%', end: '50%,88%' }
+# A lista continua íntegra após sincronizar.
+- extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 20000 }

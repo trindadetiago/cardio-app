@@ -4,6 +4,7 @@ import { count, eq } from 'drizzle-orm';
 import { db } from './client';
 import { agentesSaude, pacientes, syncQueue, visitas } from './schema';
 import { seedDevAgent } from './seed';
+import { clearSyncState } from '@/src/features/sync/sync-store';
 
 const FIRST_NAMES = [
   'Maria',
@@ -247,6 +248,7 @@ export async function wipeDados(): Promise<void> {
     await tx.delete(visitas);
     await tx.delete(pacientes);
   });
+  await clearSyncState();
 }
 
 export async function wipeTudoEReseedAgent(): Promise<void> {
@@ -256,6 +258,7 @@ export async function wipeTudoEReseedAgent(): Promise<void> {
     await tx.delete(pacientes);
     await tx.delete(agentesSaude);
   });
+  await clearSyncState();
   await seedDevAgent();
 }
 

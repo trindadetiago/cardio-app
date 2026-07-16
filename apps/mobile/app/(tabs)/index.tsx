@@ -11,6 +11,8 @@ import { formatCpf } from '@/src/lib/cpf';
 import { calcularIdade } from '@/src/lib/date';
 import { usePacientesComRisco } from '@/src/features/pacientes/pacientes-hooks';
 import type { PacienteComRisco } from '@/src/features/pacientes/paciente-risco';
+import { useAuth } from '@/src/features/auth/auth-context';
+import { runSync, useSyncUi } from '@/src/features/sync/sync-manager';
 import { useResponsive } from '@/hooks/use-responsive';
 import { colors, elevation, radius, spacing } from '@/src/theme/tokens';
 
@@ -30,8 +32,15 @@ export default function PacientesScreen() {
   const router = useRouter();
   const { data, isLoading, isRefetching, refetch, error } = usePacientesComRisco();
   const { isTablet } = useResponsive();
+  const { session } = useAuth();
+  const syncing = useSyncUi((s) => s.syncing);
   const [filtro, setFiltro] = useState<Filtro>('todos');
   const [ordem, setOrdem] = useState<Ordem>('prioridade');
+
+  // Pull-to-refresh: força um sync completo (envia + recebe do banco central).
+  const onPullRefresh = () => {
+    runSync(session?.agenteId).catch(() => refetch());
+  };
 
   const lista = useMemo(() => {
     const items = data ?? [];
@@ -129,7 +138,11 @@ export default function PacientesScreen() {
             <PacienteRow index={index} item={item} onPress={() => router.push(pacienteHref(item.paciente.id))} />
           )}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor={colors.primary} />
+            <RefreshControl
+              refreshing={syncing || isRefetching}
+              onRefresh={onPullRefresh}
+              tintColor={colors.primary}
+            />
           }
         />
       )}

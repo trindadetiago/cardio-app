@@ -54,8 +54,14 @@ o backend de sincronização (banco central) e um pacote de lógica de domínio 
 </table>
 
 > A sincronização é **automática** — sem aba dedicada. Um indicador discreto no topo da
-> lista mostra o estado (em dia / pendências / offline) e permite forçar um sync.
+> lista mostra o estado (em dia / pendências / offline) e permite forçar um sync. Puxar a
+> lista para baixo (pull-to-refresh) força um sync completo e um toast avisa o que chegou.
 > Capturas geradas no iOS Simulator via Maestro (`e2e/flows/capture*.yaml`).
+
+<p align="center">
+  <img src="docs/screenshots/11-sync-toast.png" width="240"><br>
+  <sub><b>Pull-to-refresh + toast</b> — "10 paciente(s) atualizados" após receber dados</sub>
+</p>
 
 ## Estrutura
 
@@ -136,7 +142,8 @@ npm run lint
 A sincronização é **automática e invisível**: o app envia as pendências ao salvar dados,
 ao abrir e ao voltar para o primeiro plano, e faz um sync completo ao recuperar a conexão.
 Não há tela dedicada — apenas um indicador de status no topo da lista (e um botão de
-"forçar agora" no Perfil).
+"forçar agora" no Perfil). **Puxar a lista para baixo** (pull-to-refresh) força um sync
+completo; quando algo é recebido, um **toast** discreto avisa (ex.: "4 paciente(s) atualizados").
 
 O app mantém uma `sync_queue` local. O backend é um _document-store_ chaveado por
 `(tipo, id)` com resolução **last-write-wins** por `updatedAt` e um cursor monotônico

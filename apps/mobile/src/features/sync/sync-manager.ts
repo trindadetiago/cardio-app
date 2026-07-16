@@ -9,17 +9,33 @@ import { isOnline, pushPending, sync, type SyncResult } from './sync-service';
  *   - push (envio) automático ao salvar dados, ao abrir o app e ao voltar para o app;
  *   - sync completo (envio + recebimento) ao reconectar e no comando manual do Perfil.
  */
+type PullToast = { text: string; key: number };
+
 type SyncUiState = {
   syncing: boolean;
   lastResult: SyncResult | null;
   lastError: string | null;
+  /** Última notificação de dados recebidos (para o toast). */
+  pullToast: PullToast | null;
 };
 
 export const useSyncUi = create<SyncUiState>(() => ({
   syncing: false,
   lastResult: null,
   lastError: null,
+  pullToast: null,
 }));
+
+function announcePull(result: SyncResult) {
+  const p = result.pulledPacientes;
+  const v = result.pulledVisitas;
+  if (p + v === 0) return;
+  let text: string;
+  if (p > 0 && v > 0) text = `${p} paciente(s) e ${v} visita(s) atualizados`;
+  else if (p > 0) text = `${p} paciente(s) atualizados`;
+  else text = `${v} visita(s) atualizadas`;
+  useSyncUi.setState({ pullToast: { text, key: Date.now() } });
+}
 
 function invalidate() {
   ['pacientes', 'paciente', 'visitas', 'sync', 'dev-stats'].forEach((k) =>
@@ -56,6 +72,7 @@ export async function runSync(agenteId?: string): Promise<SyncResult> {
     const result = await sync(agenteId);
     useSyncUi.setState({ lastResult: result });
     invalidate();
+    announcePull(result);
     return result;
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Falha na sincronização';

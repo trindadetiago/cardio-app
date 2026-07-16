@@ -3,6 +3,7 @@ import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { SyncToast } from '@/components/sync-toast';
 import { useAutoSync } from '@/src/features/sync/sync-hooks';
 import { colors, fontFamily } from '@/src/theme/tokens';
 
@@ -11,6 +12,7 @@ export default function TabLayout() {
   useAutoSync();
 
   return (
+    <>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -39,5 +41,7 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    <SyncToast />
+    </>
   );
 }
