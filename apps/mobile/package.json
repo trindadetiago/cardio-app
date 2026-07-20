@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "prebuild": "expo prebuild",
     "typecheck": "tsc --noEmit",
+    "test": "node --test --disable-warning=ExperimentalWarning \"src/**/*.test.ts\"",
     "lint": "expo lint",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",

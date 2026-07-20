@@ -1,24 +1,23 @@
 import * as SecureStore from 'expo-secure-store';
 
+import {
+  EMPTY_ATTEMPTS_STATE,
+  registerFailureAt,
+  remainingLockoutMsAt,
+  type AttemptsState,
+} from './lockout';
+
+export { MAX_ATTEMPTS, LOCKOUT_MS } from './lockout';
+
 const ATTEMPTS_KEY = 'cardio.login-attempts';
-
-export const MAX_ATTEMPTS = 5;
-export const LOCKOUT_MS = 15 * 60 * 1000;
-
-type AttemptsState = {
-  failures: number;
-  lockedUntil: number | null;
-};
-
-const EMPTY: AttemptsState = { failures: 0, lockedUntil: null };
 
 async function read(): Promise<AttemptsState> {
   const raw = await SecureStore.getItemAsync(ATTEMPTS_KEY);
-  if (!raw) return EMPTY;
+  if (!raw) return EMPTY_ATTEMPTS_STATE;
   try {
     return JSON.parse(raw) as AttemptsState;
   } catch {
-    return EMPTY;
+    return EMPTY_ATTEMPTS_STATE;
   }
 }
 
@@ -27,17 +26,13 @@ async function write(state: AttemptsState): Promise<void> {
 }
 
 export async function getLockoutRemainingMs(): Promise<number> {
-  const { lockedUntil } = await read();
-  if (!lockedUntil) return 0;
-  const remaining = lockedUntil - Date.now();
-  return remaining > 0 ? remaining : 0;
+  const current = await read();
+  return remainingLockoutMsAt(current, Date.now());
 }
 
-export async function registerFailure(): Promise<{ failures: number; lockedUntil: number | null }> {
+export async function registerFailure(): Promise<AttemptsState> {
   const current = await read();
-  const failures = current.failures + 1;
-  const lockedUntil = failures >= MAX_ATTEMPTS ? Date.now() + LOCKOUT_MS : null;
-  const next: AttemptsState = { failures, lockedUntil };
+  const next = registerFailureAt(current, Date.now());
   await write(next);
   return next;
 }

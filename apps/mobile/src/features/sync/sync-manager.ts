@@ -50,6 +50,10 @@ export async function autoPush(agenteId?: string): Promise<void> {
   if (useSyncUi.getState().syncing) return;
   if (Date.now() - lastAutoAt < 3000) return;
   if (!(await isOnline())) return;
+  // Re-checa após o único `await` acima: fecha a janela em que um segundo
+  // gatilho (foreground, reconexão, etc.) poderia passar pelas checagens
+  // síncronas antes desta e disparar um push duplicado concorrente.
+  if (useSyncUi.getState().syncing) return;
   lastAutoAt = Date.now();
   useSyncUi.setState({ syncing: true, lastError: null });
   try {

@@ -118,10 +118,12 @@ export function classificarRisco(
   return { ...base, nivel: 'verde', motivo: 'Parâmetros dentro da meta' };
 }
 
+// Tons escurecidos em relação ao verde-600/amber-600/red-600 originais para
+// atender contraste AA (4.5:1) como texto sobre fundo branco/claro.
 export const RISCO_COR: Record<RiscoNivel, string> = {
-  verde: '#059669',
-  amarelo: '#D97706',
-  vermelho: '#DC2626',
+  verde: '#047857',
+  amarelo: '#B45309',
+  vermelho: '#B91C1C',
   sem_dados: '#64748B',
 };
 
