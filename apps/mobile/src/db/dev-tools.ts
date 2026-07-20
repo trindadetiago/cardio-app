@@ -220,6 +220,7 @@ export async function seedFakeVisitas(
     }
     dataIsos.sort();
     const maisRecente = dataIsos[dataIsos.length - 1];
+    const now = new Date().toISOString();
 
     await db.transaction(async (tx) => {
       for (const dataIso of dataIsos) {
@@ -235,8 +236,17 @@ export async function seedFakeVisitas(
       }
       await tx
         .update(pacientes)
-        .set({ visitaMaisRecente: maisRecente, updatedAt: new Date().toISOString() })
+        .set({ visitaMaisRecente: maisRecente, updatedAt: now })
         .where(eq(pacientes.id, p.id));
+      // Mesma mutação parcial que createVisita (visitas-service.ts) enfileira ao
+      // atualizar visitaMaisRecente — sem isso, o dado fica correto localmente mas
+      // nunca chega ao backend, reaparecendo como "Sem visitas" após um resync.
+      await tx.insert(syncQueue).values({
+        recordType: 'paciente',
+        recordId: p.id,
+        operation: 'update',
+        payload: { id: p.id, visitaMaisRecente: maisRecente, updatedAt: now },
+      });
     });
   }
   return total;
@@ -271,10 +281,7 @@ export type DbStats = {
 export async function getDbStats(): Promise<DbStats> {
   const [p] = await db.select({ n: count() }).from(pacientes);
   const [v] = await db.select({ n: count() }).from(visitas);
-  const [s] = await db
-    .select({ n: count() })
-    .from(syncQueue)
-    .where(eq(syncQueue.status, 'pending'));
+  const [s] = await db.select({ n: count() }).from(syncQueue);
   return {
     pacientes: p?.n ?? 0,
     visitas: v?.n ?? 0,

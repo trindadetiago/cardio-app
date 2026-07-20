@@ -26,10 +26,11 @@ export const colors = {
   textSecondary: '#475569', // slate-600
   textMuted: '#94A3B8', // slate-400
 
-  // Risco (UC03) e severidade (UC05)
-  verde: '#059669',
-  amarelo: '#D97706', // amber-600 (contraste suficiente para texto)
-  vermelho: '#DC2626', // red-600
+  // Risco (UC03) e severidade (UC05) — mesmos tons de @cardio/shared (RISCO_COR/SEVERIDADE_COR),
+  // escurecidos em relação ao 600 original para atender contraste AA (4.5:1) como texto
+  verde: '#047857', // emerald-700
+  amarelo: '#B45309', // amber-700
+  vermelho: '#B91C1C', // red-700
   semDados: '#64748B', // slate-500
 
   // Tints para fundos de estado

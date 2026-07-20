@@ -53,6 +53,7 @@ export function Button({
         styles.base,
         { backgroundColor: BG[variant] },
         variant === 'ghost' && styles.ghost,
+        variant === 'secondary' && styles.secondary,
         pressed && !isDisabled && styles.pressed,
         isDisabled && { opacity: colors.disabledOpacity },
         style,
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   ghost: { borderWidth: 1, borderColor: colors.border },
+  secondary: { borderWidth: 1, borderColor: colors.borderStrong },
   pressed: { opacity: 0.85 },
   label: { fontFamily: fontFamily.semibold, fontSize: fontSize.lg },
 });

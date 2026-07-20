@@ -41,8 +41,10 @@ export function avaliarLdl(valor: number | null): ResultadoCritico {
   return OK;
 }
 
+// Tons escurecidos em relação ao amber-600/red-600 originais para atender
+// contraste AA (4.5:1) como texto sobre fundo branco/claro.
 export const SEVERIDADE_COR: Record<Severidade, string> = {
   ok: '#CBD5E1',
-  alerta: '#D97706',
-  critico: '#DC2626',
+  alerta: '#B45309',
+  critico: '#B91C1C',
 };

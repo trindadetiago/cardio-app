@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import { Controller, useForm, type Control } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Ionicons } from '@expo/vector-icons';
+
 import { Button, Card, Field, Input, SectionLabel, Txt } from '@/components/ui/kit';
 import { useResponsive } from '@/hooks/use-responsive';
 import { parseOptionalNumber, visitaFormSchema, type VisitaFormValues } from '@/src/features/visitas/visita-schema';
@@ -213,10 +215,17 @@ function NumericField({
 
 function Alerta({ severidade, texto }: { severidade: Severidade; texto: string }) {
   const cor = SEVERIDADE_COR[severidade];
+  const critico = severidade === 'critico';
   return (
-    <View style={[styles.alerta, { borderColor: `${cor}55`, backgroundColor: `${cor}12` }]}>
-      <Txt variant="caption" color={cor} style={styles.alertaText}>
-        {texto}
+    <View
+      style={[
+        styles.alerta,
+        { borderColor: `${cor}55`, backgroundColor: `${cor}12` },
+        critico && styles.alertaCritico,
+      ]}>
+      <Ionicons name={critico ? 'alert-circle' : 'warning-outline'} size={critico ? 18 : 16} color={cor} />
+      <Txt variant="caption" color={cor} style={[styles.alertaText, critico && styles.alertaTextCritico]}>
+        {critico ? `CRÍTICO — ${texto}` : texto}
       </Txt>
     </View>
   );
@@ -251,7 +260,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryTint,
     borderRadius: radius.md,
   },
-  alerta: { borderWidth: 1, borderRadius: radius.md, padding: spacing.md },
-  alertaText: { fontFamily: fontFamily.medium },
+  alerta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  alertaCritico: { borderWidth: 2 },
+  alertaText: { fontFamily: fontFamily.medium, flexShrink: 1 },
+  alertaTextCritico: { fontFamily: fontFamily.bold },
   actions: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.xs },
 });

@@ -82,11 +82,6 @@ export const syncQueue = sqliteTable('sync_queue', {
   timestamp: text('timestamp')
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
-  status: text('status', { enum: ['pending', 'syncing', 'synced', 'error'] })
-    .notNull()
-    .default('pending'),
-  retryCount: integer('retry_count').notNull().default(0),
-  errorMessage: text('error_message'),
 });
 
 export type AgenteSaude = typeof agentesSaude.$inferSelect;

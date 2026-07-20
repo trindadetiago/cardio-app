@@ -44,20 +44,18 @@ export async function isOnline(): Promise<boolean> {
   }
 }
 
+// Toda linha em sync_queue é, por construção, uma mutação pendente: criada ao
+// enfileirar a mudança e apagada assim que o push correspondente é confirmado
+// (abaixo). Não há bookkeeping de status/retry — por isso as consultas aqui
+// não filtram nada, apenas leem a fila inteira.
+
 export async function getPendingCount(): Promise<number> {
-  const [row] = await db
-    .select({ n: count() })
-    .from(syncQueue)
-    .where(eq(syncQueue.status, 'pending'));
+  const [row] = await db.select({ n: count() }).from(syncQueue);
   return row?.n ?? 0;
 }
 
 export async function pushPending(agenteId?: string): Promise<{ pushed: number }> {
-  const pendentes = await db
-    .select()
-    .from(syncQueue)
-    .where(eq(syncQueue.status, 'pending'))
-    .orderBy(asc(syncQueue.id));
+  const pendentes = await db.select().from(syncQueue).orderBy(asc(syncQueue.id));
 
   if (pendentes.length === 0) return { pushed: 0 };
 
