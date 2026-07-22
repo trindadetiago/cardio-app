@@ -16,6 +16,11 @@ appId: com.anonymous.cardio-remoto
 - tapOn: { id: 'input-nascimento' }
 - inputText: '22091985'
 - tapOn: { id: 'sexo-feminino' }
+# Fatores de risco categóricos (dispensa teclado antes de tocar nas pills)
+- swipe: { start: '50%,45%', end: '50%,72%' }
+- scrollUntilVisible: { element: { id: 'tabagismo-nao_fumante' }, direction: DOWN }
+- tapOn: { id: 'tabagismo-nao_fumante' }
+- tapOn: { id: 'atividade-regularmente' }
 - scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
 - tapOn: { id: 'btn-salvar-paciente' }
 - extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 30000 }
@@ -53,6 +58,10 @@ appId: com.anonymous.cardio-remoto
 - tapOn: { id: 'input-nascimento' }
 - inputText: '14071968'
 - tapOn: { id: 'sexo-feminino' }
+- swipe: { start: '50%,45%', end: '50%,72%' }
+- scrollUntilVisible: { element: { id: 'tabagismo-ex_fumante' }, direction: DOWN }
+- tapOn: { id: 'tabagismo-ex_fumante' }
+- tapOn: { id: 'atividade-raramente' }
 - scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
 - tapOn: { id: 'btn-salvar-paciente' }
 - extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
@@ -134,6 +143,10 @@ appId: com.anonymous.cardio-remoto
 - tapOn: { id: 'input-nascimento' }
 - inputText: '03031959'
 - tapOn: { id: 'sexo-masculino' }
+- swipe: { start: '50%,45%', end: '50%,72%' }
+- scrollUntilVisible: { element: { id: 'tabagismo-fumante' }, direction: DOWN }
+- tapOn: { id: 'tabagismo-fumante' }
+- tapOn: { id: 'atividade-nao_praticante' }
 - scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
 - tapOn: { id: 'btn-salvar-paciente' }
 - extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }

@@ -1,0 +1,36 @@
+# RF002 — campos categóricos (tabagismo 3 estados, atividade 4 níveis, histórico CV
+# Não/IAM/AVC/DAP/outro), revelação condicional da data do evento e persistência
+# dos rótulos na tela de detalhe.
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: ../flows/_login.yaml
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+- tapOn: { id: 'input-cpf' }
+- inputText: '11144477735'
+- tapOn: { id: 'input-nome' }
+- inputText: 'Paciente Categorico E2E'
+- tapOn: { id: 'input-nascimento' }
+- inputText: '20051985'
+- tapOn: { id: 'sexo-feminino' }
+# Dispensa o teclado (aberto pelos campos de texto) antes de tocar nas pills — senão
+# o primeiro toque apenas fecha o teclado em vez de selecionar a opção.
+- swipe: { start: '50%,45%', end: '50%,72%' }
+- scrollUntilVisible: { element: { id: 'tabagismo-fumante' }, direction: DOWN }
+- tapOn: { id: 'tabagismo-fumante' }
+- scrollUntilVisible: { element: { id: 'atividade-frequentemente' }, direction: DOWN }
+- tapOn: { id: 'atividade-frequentemente' }
+# Selecionar IAM revela o campo condicional de data do evento CV
+- scrollUntilVisible: { element: { id: 'historico-iam' }, direction: DOWN }
+- tapOn: { id: 'historico-iam' }
+- assertVisible: 'Data do evento CV'
+# Voltar para "Não" oculta o campo e dispensa a data; então salva
+- tapOn: { id: 'historico-nao' }
+- scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-paciente' }
+- extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 30000 }
+# Detalhe mostra os rótulos categóricos selecionados
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { text: 'Fumante' }, timeout: 30000 }
+- assertVisible: 'Fumante'
+- assertVisible: 'Frequentemente'

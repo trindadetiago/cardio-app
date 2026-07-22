@@ -12,14 +12,21 @@ export const pacienteFormSchema = z
       .min(1, 'Informe a data de nascimento')
       .refine((v) => parseBRDate(v) !== null, 'Data inválida'),
     sexo: z.enum(['M', 'F'], { message: 'Selecione o sexo' }),
-    tabagismo: z.boolean(),
-    atividadeFisica: z.boolean(),
+    tabagismo: z.enum(['nao_fumante', 'ex_fumante', 'fumante'], {
+      message: 'Selecione o tabagismo',
+    }),
+    atividadeFisica: z.enum(
+      ['nao_praticante', 'raramente', 'regularmente', 'frequentemente'],
+      { message: 'Selecione a atividade física' }
+    ),
     estatina: z.boolean(),
-    historicoCv: z.boolean(),
+    historicoCv: z.enum(['nao', 'iam', 'avc', 'dap', 'outro'], {
+      message: 'Selecione o histórico CV',
+    }),
     dataEventoCv: z.string(),
   })
   .superRefine((data, ctx) => {
-    if (!data.historicoCv) return;
+    if (data.historicoCv === 'nao') return;
     if (!data.dataEventoCv || data.dataEventoCv.trim() === '') {
       ctx.addIssue({
         code: 'custom',

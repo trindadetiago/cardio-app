@@ -43,8 +43,9 @@ export default function NovaVisitaScreen() {
     defaultValues: {
       dataVisita: todayBR(),
       peso: '', altura: '', circunferenciaAbdominal: '',
-      paSistolica: '', paDiastolica: '', frequenciaCardiaca: '',
+      paSistolica: '', paDiastolica: '', frequenciaCardiaca: '', glicemiaCapilar: '',
       glicemiaJejum: '', hba1c: '', colesterolTotal: '', ldl: '', hdl: '', triglicerides: '', creatinina: '',
+      ureia: '', tsh: '', tgo: '', tgp: '', cpk: '', relacaoAlbuminaCreatinina: '',
       observacoes: '',
     },
   });
@@ -129,7 +130,10 @@ export default function NovaVisitaScreen() {
               <NumericField control={control} name="paDiastolica" label="PA diastólica" unit="mmHg" severidade={paResult.severidade} error={errors.paDiastolica?.message} />
             </View>
             {paResult.mensagem && <Alerta severidade={paResult.severidade} texto={paResult.mensagem} />}
-            <NumericField control={control} name="frequenciaCardiaca" label="Frequência cardíaca" unit="bpm" error={errors.frequenciaCardiaca?.message} />
+            <View style={styles.row}>
+              <NumericField control={control} name="frequenciaCardiaca" label="Frequência cardíaca" unit="bpm" error={errors.frequenciaCardiaca?.message} />
+              <NumericField control={control} name="glicemiaCapilar" label="Glicemia capilar" unit="mg/dL" error={errors.glicemiaCapilar?.message} />
+            </View>
           </Card>
         </View>
 
@@ -148,7 +152,19 @@ export default function NovaVisitaScreen() {
               <NumericField control={control} name="hdl" label="HDL" unit="mg/dL" error={errors.hdl?.message} />
               <NumericField control={control} name="triglicerides" label="Triglicérides" unit="mg/dL" error={errors.triglicerides?.message} />
             </View>
-            <NumericField control={control} name="creatinina" label="Creatinina" unit="mg/dL" error={errors.creatinina?.message} />
+            <View style={styles.row}>
+              <NumericField control={control} name="creatinina" label="Creatinina" unit="mg/dL" error={errors.creatinina?.message} />
+              <NumericField control={control} name="ureia" label="Ureia" unit="mg/dL" error={errors.ureia?.message} />
+            </View>
+            <View style={styles.row}>
+              <NumericField control={control} name="tsh" label="TSH" unit="µUI/mL" error={errors.tsh?.message} />
+              <NumericField control={control} name="relacaoAlbuminaCreatinina" label="Alb./creat." unit="mg/g" error={errors.relacaoAlbuminaCreatinina?.message} />
+            </View>
+            <View style={styles.row}>
+              <NumericField control={control} name="tgo" label="TGO" unit="U/L" error={errors.tgo?.message} />
+              <NumericField control={control} name="tgp" label="TGP" unit="U/L" error={errors.tgp?.message} />
+            </View>
+            <NumericField control={control} name="cpk" label="CPK" unit="U/L" error={errors.cpk?.message} />
           </Card>
         </View>
 

@@ -18,6 +18,19 @@ appId: com.anonymous.cardio-remoto
 - inputText: "15031990"
 - tapOn:
     id: "sexo-masculino"
+# Fatores de risco categóricos (RF002): tabagismo (3 estados) e atividade (4 níveis).
+- scrollUntilVisible:
+    element:
+      id: "tabagismo-ex_fumante"
+    direction: DOWN
+- tapOn:
+    id: "tabagismo-ex_fumante"
+- scrollUntilVisible:
+    element:
+      id: "atividade-regularmente"
+    direction: DOWN
+- tapOn:
+    id: "atividade-regularmente"
 # O scroll (keyboardDismissMode on-drag) dispensa o teclado e revela o botão.
 - scrollUntilVisible:
     element:

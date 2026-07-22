@@ -3,7 +3,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
-import { RISCO_COR, RISCO_LABEL } from '@cardio/shared';
+import {
+  ATIVIDADE_FISICA_LABEL,
+  HISTORICO_CV_LABEL,
+  RISCO_COR,
+  RISCO_LABEL,
+  TABAGISMO_LABEL,
+} from '@cardio/shared';
 import { Button, InfoRow, SectionCard, Txt } from '@/components/ui/kit';
 import { usePaciente } from '@/src/features/pacientes/pacientes-hooks';
 import { avaliarPaciente } from '@/src/features/pacientes/paciente-risco';
@@ -96,11 +102,11 @@ export default function PacienteDetailScreen() {
         </SectionCard>
 
         <SectionCard title="Fatores de risco">
-          <InfoRow first label="Tabagismo" value={paciente.tabagismo ? 'Sim' : 'Não'} />
-          <InfoRow label="Atividade física" value={paciente.atividadeFisica ? 'Sim' : 'Não'} />
+          <InfoRow first label="Tabagismo" value={TABAGISMO_LABEL[paciente.tabagismo]} />
+          <InfoRow label="Atividade física" value={ATIVIDADE_FISICA_LABEL[paciente.atividadeFisica]} />
           <InfoRow label="Usa estatina" value={paciente.estatina ? 'Sim' : 'Não'} />
-          <InfoRow label="Histórico de evento CV" value={paciente.historicoCv ? 'Sim' : 'Não'} />
-          {paciente.historicoCv && paciente.dataEventoCv && (
+          <InfoRow label="Histórico de evento CV" value={HISTORICO_CV_LABEL[paciente.historicoCv]} />
+          {paciente.historicoCv !== 'nao' && paciente.dataEventoCv && (
             <InfoRow label="Data do evento" value={formatIsoToBR(paciente.dataEventoCv)} />
           )}
         </SectionCard>

@@ -1,6 +1,7 @@
 import {
   calcularPrioridade,
   classificarRisco,
+  temHistoricoCv,
   type PrioridadeVisita,
   type RiscoResultado,
 } from '@cardio/shared';
@@ -28,7 +29,7 @@ export function avaliarPaciente(
 ): PacienteComRisco {
   const risco = classificarRisco(
     {
-      historicoCv: paciente.historicoCv,
+      historicoCv: temHistoricoCv(paciente.historicoCv),
       dataEventoCv: paciente.dataEventoCv,
       ultimaVisita: ultimaVisita
         ? {

@@ -30,11 +30,11 @@ o backend de sincronização (banco central) e um pacote de lógica de domínio 
     </td>
     <td align="center" width="33%">
       <img src="docs/screenshots/08-novo-paciente.png" width="240"><br>
-      <b>Cadastro de paciente</b><br><sub>CPF validado, idade automática, fatores de risco</sub>
+      <b>Cadastro de paciente</b><br><sub>CPF validado, idade automática, tabagismo/atividade/histórico categóricos</sub>
     </td>
     <td align="center" width="33%">
       <img src="docs/screenshots/07-nova-visita.png" width="240"><br>
-      <b>Nova visita</b><br><sub>IMC automático + alertas de valores críticos</sub>
+      <b>Nova visita</b><br><sub>IMC automático, alertas críticos e painel laboratorial completo</sub>
     </td>
   </tr>
   <tr>
@@ -105,10 +105,10 @@ biblioteca de componentes reutilizáveis em `apps/mobile/components/ui/` (`Txt`,
 | Req    | Descrição                                    | Onde |
 |--------|----------------------------------------------|------|
 | RF001  | Login (bloqueio após 5 tentativas)           | `apps/mobile/src/features/auth` |
-| RF002  | Cadastrar paciente (CPF validado, idade auto)| `apps/mobile/app/pacientes/novo.tsx` |
+| RF002  | Cadastrar paciente (CPF validado, idade auto, tabagismo/atividade/histórico CV categóricos) | `apps/mobile/app/pacientes/novo.tsx` |
 | RF003  | Filtrar pacientes por risco                  | `apps/mobile/app/(tabs)/index.tsx` + `packages/shared/src/risco.ts` |
 | RF004  | Ordenar por prioridade de visita             | `packages/shared/src/visita-prioridade.ts` |
-| RF005  | Inserir visita (IMC + alertas críticos)      | `apps/mobile/app/pacientes/[id]/visitas/nova.tsx` |
+| RF005  | Inserir visita (IMC + alertas críticos + antropométricos, sinais vitais e exames laboratoriais completos) | `apps/mobile/app/pacientes/[id]/visitas/nova.tsx` |
 | RF006  | Evolução (tabela + gráfico temporal)         | `apps/mobile/app/pacientes/[id]/evolucao.tsx` |
 | RF007  | Sincronização (automática + manual)          | `apps/mobile/src/features/sync` + `apps/backend` |
 | RFN001 | Offline-first + sync automática              | fila `sync_queue` + `useAutoSync` |

@@ -1,6 +1,11 @@
 import * as Crypto from 'expo-crypto';
 import { count, eq } from 'drizzle-orm';
 
+import {
+  ATIVIDADE_FISICA_OPCOES,
+  TABAGISMO_OPCOES,
+  type HistoricoCv,
+} from '@cardio/shared';
 import { db } from './client';
 import { agentesSaude, pacientes, syncQueue, visitas } from './schema';
 import { seedDevAgent } from './seed';
@@ -107,7 +112,9 @@ export async function seedFakePacientes(quantidade: number, agenteId: string): P
   for (let i = 0; i < quantidade; i++) {
     const cpf = generateValidCpf();
     const nome = `${pick(FIRST_NAMES)} ${pick(LAST_NAMES)} ${pick(LAST_NAMES)}`;
-    const historicoCv = chance(0.25);
+    const historicoCv: HistoricoCv = chance(0.25)
+      ? pick(['iam', 'avc', 'dap', 'outro'] as const)
+      : 'nao';
     const nascIso = randomBirthDateIso();
     const now = new Date().toISOString();
     const id = Crypto.randomUUID();
@@ -117,11 +124,11 @@ export async function seedFakePacientes(quantidade: number, agenteId: string): P
       nome,
       dataNascimento: nascIso,
       sexo: chance(0.5) ? ('M' as const) : ('F' as const),
-      tabagismo: chance(0.3),
-      atividadeFisica: chance(0.4),
+      tabagismo: pick(TABAGISMO_OPCOES),
+      atividadeFisica: pick(ATIVIDADE_FISICA_OPCOES),
       estatina: chance(0.35),
       historicoCv,
-      dataEventoCv: historicoCv ? randomVisitaDateIso(365 * 5).slice(0, 10) : null,
+      dataEventoCv: historicoCv !== 'nao' ? randomVisitaDateIso(365 * 5).slice(0, 10) : null,
       visitaMaisRecente: null,
       agenteId,
       createdAt: now,
@@ -190,6 +197,7 @@ function buildFakeVisita(pacienteId: string, agenteId: string, dataIso: string):
     paSistolica: sist,
     paDiastolica: dias,
     frequenciaCardiaca: randInt(58, 95),
+    glicemiaCapilar: roundTo(rand(80, 180), 0),
     glicemiaJejum: roundTo(glicemia, 0),
     hba1c: roundTo(rand(4.8, 9.5), 1),
     colesterolTotal: roundTo(rand(150, 280), 0),
@@ -197,6 +205,12 @@ function buildFakeVisita(pacienteId: string, agenteId: string, dataIso: string):
     hdl: roundTo(rand(32, 75), 0),
     triglicerides: roundTo(rand(80, 320), 0),
     creatinina: roundTo(rand(0.6, 1.4), 2),
+    ureia: roundTo(rand(15, 50), 0),
+    tsh: roundTo(rand(0.5, 5), 2),
+    tgo: roundTo(rand(10, 45), 0),
+    tgp: roundTo(rand(10, 50), 0),
+    cpk: roundTo(rand(40, 200), 0),
+    relacaoAlbuminaCreatinina: roundTo(rand(5, 40), 0),
     observacoes: null,
     createdAt: now,
     updatedAt: now,

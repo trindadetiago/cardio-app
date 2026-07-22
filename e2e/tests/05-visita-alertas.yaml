@@ -11,16 +11,17 @@ appId: com.anonymous.cardio-remoto
 - tapOn: { id: 'visita-paSistolica' }
 - inputText: '185'
 - swipe: { start: '50%,58%', end: '50%,44%' }
-- assertVisible: 'Crise hipertensiva.*'
-# Glicemia grave (>=200)
+# O alerta crítico é prefixado com "CRÍTICO — ", por isso o .* inicial.
+- assertVisible: '.*Crise hipertensiva.*'
+# Glicemia grave (>=250)
 - scrollUntilVisible: { element: { id: 'visita-glicemiaJejum' }, direction: DOWN }
 - tapOn: { id: 'visita-glicemiaJejum' }
 - inputText: '260'
 - swipe: { start: '50%,58%', end: '50%,44%' }
-- assertVisible: 'Hiperglicemia grave.*'
+- assertVisible: '.*Hiperglicemia grave.*'
 # LDL muito alto (>=190)
 - scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
 - tapOn: { id: 'visita-ldl' }
 - inputText: '210'
 - swipe: { start: '50%,58%', end: '50%,44%' }
-- assertVisible: 'LDL muito alto.*'
+- assertVisible: '.*LDL muito alto.*'

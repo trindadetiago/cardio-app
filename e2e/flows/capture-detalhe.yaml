@@ -1,0 +1,46 @@
+# Cria um paciente (fumante, sedentário) com uma visita de 3 parâmetros fora da meta
+# -> risco "Grave" -> e captura a tela de detalhe (rótulos categóricos + risco + visita).
+appId: com.anonymous.cardio-remoto
+---
+- runFlow: _login.yaml
+- tapOn: { id: 'fab-novo-paciente' }
+- extendedWaitUntil: { visible: { id: 'input-cpf' }, timeout: 30000 }
+- tapOn: { id: 'input-cpf' }
+- inputText: '39053344705'
+- tapOn: { id: 'input-nome' }
+- inputText: 'Carlos Andrade Lima'
+- tapOn: { id: 'input-nascimento' }
+- inputText: '06031958'
+- tapOn: { id: 'sexo-masculino' }
+- swipe: { start: '50%,45%', end: '50%,72%' }
+- scrollUntilVisible: { element: { id: 'tabagismo-fumante' }, direction: DOWN }
+- tapOn: { id: 'tabagismo-fumante' }
+- tapOn: { id: 'atividade-nao_praticante' }
+- scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-paciente' }
+- extendedWaitUntil: { visible: { id: 'paciente-row-0' }, timeout: 30000 }
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'btn-nova-visita' }, timeout: 30000 }
+# Visita com 3 parâmetros fora da meta (PA, HbA1c, LDL) -> Grave
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-paSistolica' }, timeout: 30000 }
+- tapOn: { id: 'visita-peso' }
+- inputText: '92'
+- tapOn: { id: 'visita-altura' }
+- inputText: '1.72'
+- swipe: { start: '50%,55%', end: '50%,40%' }
+- scrollUntilVisible: { element: { id: 'visita-paSistolica' }, direction: DOWN }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '158'
+- swipe: { start: '50%,58%', end: '50%,44%' }
+- scrollUntilVisible: { element: { id: 'visita-hba1c' }, direction: DOWN }
+- tapOn: { id: 'visita-hba1c' }
+- inputText: '8.2'
+- swipe: { start: '50%,58%', end: '50%,44%' }
+- scrollUntilVisible: { element: { id: 'visita-ldl' }, direction: DOWN }
+- tapOn: { id: 'visita-ldl' }
+- inputText: '172'
+- scrollUntilVisible: { element: { id: 'btn-salvar-visita' }, direction: DOWN }
+- tapOn: { id: 'btn-salvar-visita' }
+- extendedWaitUntil: { visible: { id: 'detalhe-risco' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/04-detalhe

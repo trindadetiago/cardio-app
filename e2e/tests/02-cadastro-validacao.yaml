@@ -7,6 +7,8 @@ appId: com.anonymous.cardio-remoto
 # Submete vazio -> erros de validação
 - scrollUntilVisible: { element: { id: 'btn-salvar-paciente' }, direction: DOWN }
 - tapOn: { id: 'btn-salvar-paciente' }
+# O erro fica junto ao campo CPF (topo); o formulário é longo, então rola até ele.
+- scrollUntilVisible: { element: { text: 'CPF inválido' }, direction: UP }
 - assertVisible: 'CPF inválido'
 - assertVisible: 'Nome muito curto'
 # CPF inválido explícito

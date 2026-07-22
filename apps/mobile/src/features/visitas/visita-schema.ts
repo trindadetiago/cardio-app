@@ -15,6 +15,7 @@ export const MEASUREMENT_FIELDS = [
   'paSistolica',
   'paDiastolica',
   'frequenciaCardiaca',
+  'glicemiaCapilar',
   'glicemiaJejum',
   'hba1c',
   'colesterolTotal',
@@ -22,6 +23,12 @@ export const MEASUREMENT_FIELDS = [
   'hdl',
   'triglicerides',
   'creatinina',
+  'ureia',
+  'tsh',
+  'tgo',
+  'tgp',
+  'cpk',
+  'relacaoAlbuminaCreatinina',
 ] as const;
 
 export const visitaFormSchema = z
@@ -36,6 +43,7 @@ export const visitaFormSchema = z
     paSistolica: numStr,
     paDiastolica: numStr,
     frequenciaCardiaca: numStr,
+    glicemiaCapilar: numStr,
     glicemiaJejum: numStr,
     hba1c: numStr,
     colesterolTotal: numStr,
@@ -43,6 +51,12 @@ export const visitaFormSchema = z
     hdl: numStr,
     triglicerides: numStr,
     creatinina: numStr,
+    ureia: numStr,
+    tsh: numStr,
+    tgo: numStr,
+    tgp: numStr,
+    cpk: numStr,
+    relacaoAlbuminaCreatinina: numStr,
     observacoes: z.string(),
   })
   .superRefine((data, ctx) => {

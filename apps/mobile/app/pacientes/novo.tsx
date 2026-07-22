@@ -13,6 +13,14 @@ import {
   View,
 } from 'react-native';
 
+import {
+  ATIVIDADE_FISICA_LABEL,
+  ATIVIDADE_FISICA_OPCOES,
+  HISTORICO_CV_LABEL,
+  HISTORICO_CV_OPCOES,
+  TABAGISMO_LABEL,
+  TABAGISMO_OPCOES,
+} from '@cardio/shared';
 import { Button, Card, Field, Input, SectionLabel, Txt } from '@/components/ui/kit';
 import { useResponsive } from '@/hooks/use-responsive';
 import { useCreatePaciente } from '@/src/features/pacientes/pacientes-hooks';
@@ -43,10 +51,10 @@ export default function NovoPacienteScreen() {
       nome: '',
       dataNascimento: '',
       sexo: undefined as unknown as 'M',
-      tabagismo: false,
-      atividadeFisica: false,
+      tabagismo: 'nao_fumante',
+      atividadeFisica: 'nao_praticante',
       estatina: false,
-      historicoCv: false,
+      historicoCv: 'nao',
       dataEventoCv: '',
     },
   });
@@ -166,17 +174,60 @@ export default function NovoPacienteScreen() {
         <View style={styles.section}>
           <SectionLabel>Fatores de risco</SectionLabel>
           <Card style={styles.group}>
-            <BooleanField control={control} name="tabagismo" label="Tabagismo" />
-            <BooleanField control={control} name="atividadeFisica" label="Pratica atividade física" />
+            <Field label="Tabagismo" error={errors.tabagismo?.message}>
+              <Controller
+                control={control}
+                name="tabagismo"
+                render={({ field: { value, onChange } }) => (
+                  <OptionPills
+                    testIDPrefix="tabagismo"
+                    options={TABAGISMO_OPCOES}
+                    labels={TABAGISMO_LABEL}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </Field>
+            <Field label="Atividade física" error={errors.atividadeFisica?.message}>
+              <Controller
+                control={control}
+                name="atividadeFisica"
+                render={({ field: { value, onChange } }) => (
+                  <OptionPills
+                    testIDPrefix="atividade"
+                    options={ATIVIDADE_FISICA_OPCOES}
+                    labels={ATIVIDADE_FISICA_LABEL}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </Field>
             <BooleanField control={control} name="estatina" label="Usa estatina" />
-            <BooleanField control={control} name="historicoCv" label="Histórico de evento CV" />
-            {historicoCv && (
+            <Field label="Histórico de evento CV" error={errors.historicoCv?.message}>
+              <Controller
+                control={control}
+                name="historicoCv"
+                render={({ field: { value, onChange } }) => (
+                  <OptionPills
+                    testIDPrefix="historico"
+                    options={HISTORICO_CV_OPCOES}
+                    labels={HISTORICO_CV_LABEL}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </Field>
+            {historicoCv !== 'nao' && (
               <Field label="Data do evento CV" error={errors.dataEventoCv?.message}>
                 <Controller
                   control={control}
                   name="dataEventoCv"
                   render={({ field: { value, onChange, onBlur } }) => (
                     <Input
+                      testID="historico-data"
                       keyboardType="number-pad"
                       placeholder="DD/MM/AAAA"
                       value={formatBRDate(value ?? '')}
@@ -221,9 +272,44 @@ function SegmentedOption({ label, selected, onPress, testID }: { label: string; 
   );
 }
 
+function OptionPills<T extends string>({
+  options,
+  labels,
+  value,
+  onChange,
+  testIDPrefix,
+}: {
+  options: readonly T[];
+  labels: Record<T, string>;
+  value: T;
+  onChange: (v: T) => void;
+  testIDPrefix: string;
+}) {
+  return (
+    <View style={styles.pills}>
+      {options.map((opt) => {
+        const selected = value === opt;
+        return (
+          <Pressable
+            key={opt}
+            testID={`${testIDPrefix}-${opt}`}
+            accessibilityRole="button"
+            accessibilityState={{ selected }}
+            onPress={() => onChange(opt)}
+            style={[styles.pill, selected && styles.pillSelected]}>
+            <Txt variant="bodyMedium" color={selected ? colors.onPrimary : colors.textSecondary}>
+              {labels[opt]}
+            </Txt>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
 type BooleanFieldProps = {
   control: ReturnType<typeof useForm<PacienteFormValues>>['control'];
-  name: 'tabagismo' | 'atividadeFisica' | 'estatina' | 'historicoCv';
+  name: 'estatina';
   label: string;
 };
 
@@ -266,6 +352,18 @@ const styles = StyleSheet.create({
   },
   segment: { flex: 1, paddingVertical: 11, alignItems: 'center', justifyContent: 'center', minHeight: 46, borderRadius: radius.sm },
   segmentSelected: { backgroundColor: colors.primary },
+  pills: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  pill: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 10,
+    minHeight: 44,
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceAlt,
+  },
+  pillSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
   switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },
   actions: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.xs },
 });

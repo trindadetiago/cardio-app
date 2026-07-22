@@ -1,0 +1,24 @@
+# Recaptura 04-detalhe e 07-nova-visita usando os dados do painel de dev (_seed-dev).
+# row-0 tem 3 visitas -> risco classificado + rótulos categóricos.
+appId: com.anonymous.cardio-remoto
+---
+- launchApp
+- extendedWaitUntil: { visible: { id: 'pacientes-title' }, timeout: 30000 }
+- tapOn: { id: 'paciente-row-0' }
+- extendedWaitUntil: { visible: { id: 'detalhe-risco' }, timeout: 30000 }
+- takeScreenshot: docs/screenshots/04-detalhe
+
+# Nova visita: IMC automático + alerta crítico de PA
+- tapOn: { id: 'btn-nova-visita' }
+- extendedWaitUntil: { visible: { id: 'visita-paSistolica' }, timeout: 30000 }
+- tapOn: { id: 'visita-peso' }
+- inputText: '82'
+- tapOn: { id: 'visita-altura' }
+- inputText: '1.70'
+# Dispensa o teclado e garante foco no campo de PA (evita vazar texto para altura).
+- swipe: { start: '50%,55%', end: '50%,40%' }
+- scrollUntilVisible: { element: { id: 'visita-paSistolica' }, direction: DOWN }
+- tapOn: { id: 'visita-paSistolica' }
+- inputText: '185'
+- swipe: { start: '50%,58%', end: '50%,44%' }
+- takeScreenshot: docs/screenshots/07-nova-visita

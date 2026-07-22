@@ -2,7 +2,10 @@ import NetInfo from '@react-native-community/netinfo';
 import { asc, count, eq, inArray } from 'drizzle-orm';
 
 import {
+  ATIVIDADE_FISICA_OPCOES,
+  HISTORICO_CV_OPCOES,
   shouldApply,
+  TABAGISMO_OPCOES,
   type PullResponse,
   type PushRequest,
   type PushResponse,
@@ -97,6 +100,9 @@ function str(v: unknown, fallback = ''): string {
 function num(v: unknown): number | null {
   return typeof v === 'number' && Number.isFinite(v) ? v : null;
 }
+function enumOr<T extends string>(v: unknown, allowed: readonly T[], fallback: T): T {
+  return typeof v === 'string' && (allowed as readonly string[]).includes(v) ? (v as T) : fallback;
+}
 
 async function upsertPaciente(payload: Record<string, unknown>): Promise<boolean> {
   const id = str(payload.id);
@@ -115,10 +121,10 @@ async function upsertPaciente(payload: Record<string, unknown>): Promise<boolean
     nome: str(payload.nome),
     dataNascimento: str(payload.dataNascimento),
     sexo: (payload.sexo === 'F' ? 'F' : 'M') as 'M' | 'F',
-    tabagismo: !!payload.tabagismo,
-    atividadeFisica: !!payload.atividadeFisica,
+    tabagismo: enumOr(payload.tabagismo, TABAGISMO_OPCOES, 'nao_fumante'),
+    atividadeFisica: enumOr(payload.atividadeFisica, ATIVIDADE_FISICA_OPCOES, 'nao_praticante'),
     estatina: !!payload.estatina,
-    historicoCv: !!payload.historicoCv,
+    historicoCv: enumOr(payload.historicoCv, HISTORICO_CV_OPCOES, 'nao'),
     dataEventoCv: (payload.dataEventoCv as string | null) ?? null,
     visitaMaisRecente: (payload.visitaMaisRecente as string | null) ?? null,
     agenteId: str(payload.agenteId),
@@ -155,6 +161,7 @@ async function upsertVisita(payload: Record<string, unknown>): Promise<boolean> 
     paSistolica: num(payload.paSistolica),
     paDiastolica: num(payload.paDiastolica),
     frequenciaCardiaca: num(payload.frequenciaCardiaca),
+    glicemiaCapilar: num(payload.glicemiaCapilar),
     glicemiaJejum: num(payload.glicemiaJejum),
     hba1c: num(payload.hba1c),
     colesterolTotal: num(payload.colesterolTotal),
@@ -162,6 +169,12 @@ async function upsertVisita(payload: Record<string, unknown>): Promise<boolean> 
     hdl: num(payload.hdl),
     triglicerides: num(payload.triglicerides),
     creatinina: num(payload.creatinina),
+    ureia: num(payload.ureia),
+    tsh: num(payload.tsh),
+    tgo: num(payload.tgo),
+    tgp: num(payload.tgp),
+    cpk: num(payload.cpk),
+    relacaoAlbuminaCreatinina: num(payload.relacaoAlbuminaCreatinina),
     observacoes: (payload.observacoes as string | null) ?? null,
     createdAt: str(payload.createdAt, now),
     updatedAt: str(payload.updatedAt, now),

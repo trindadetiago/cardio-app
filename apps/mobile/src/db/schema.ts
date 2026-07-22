@@ -20,10 +20,16 @@ export const pacientes = sqliteTable('pacientes', {
   nome: text('nome').notNull(),
   dataNascimento: text('data_nascimento').notNull(),
   sexo: text('sexo', { enum: ['M', 'F'] }).notNull(),
-  tabagismo: integer('tabagismo', { mode: 'boolean' }).notNull(),
-  atividadeFisica: integer('atividade_fisica', { mode: 'boolean' }).notNull(),
+  tabagismo: text('tabagismo', {
+    enum: ['nao_fumante', 'ex_fumante', 'fumante'],
+  }).notNull(),
+  atividadeFisica: text('atividade_fisica', {
+    enum: ['nao_praticante', 'raramente', 'regularmente', 'frequentemente'],
+  }).notNull(),
   estatina: integer('estatina', { mode: 'boolean' }).notNull(),
-  historicoCv: integer('historico_cv', { mode: 'boolean' }).notNull(),
+  historicoCv: text('historico_cv', {
+    enum: ['nao', 'iam', 'avc', 'dap', 'outro'],
+  }).notNull(),
   dataEventoCv: text('data_evento_cv'),
   visitaMaisRecente: text('visita_mais_recente'),
   agenteId: text('agente_id')
@@ -55,6 +61,7 @@ export const visitas = sqliteTable('visitas', {
   paSistolica: integer('pa_sistolica'),
   paDiastolica: integer('pa_diastolica'),
   frequenciaCardiaca: integer('frequencia_cardiaca'),
+  glicemiaCapilar: real('glicemia_capilar'),
   glicemiaJejum: real('glicemia_jejum'),
   hba1c: real('hba1c'),
   colesterolTotal: real('colesterol_total'),
@@ -62,6 +69,12 @@ export const visitas = sqliteTable('visitas', {
   hdl: real('hdl'),
   triglicerides: real('triglicerides'),
   creatinina: real('creatinina'),
+  ureia: real('ureia'),
+  tsh: real('tsh'),
+  tgo: real('tgo'),
+  tgp: real('tgp'),
+  cpk: real('cpk'),
+  relacaoAlbuminaCreatinina: real('relacao_albumina_creatinina'),
   observacoes: text('observacoes'),
   createdAt: text('created_at')
     .notNull()

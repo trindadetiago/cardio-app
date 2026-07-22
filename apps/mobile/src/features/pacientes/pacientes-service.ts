@@ -96,7 +96,9 @@ export async function createPaciente(
   const id = Crypto.randomUUID();
   const now = new Date().toISOString();
   const dataEventoCv =
-    values.historicoCv && values.dataEventoCv ? parseBRDate(values.dataEventoCv) : null;
+    values.historicoCv !== 'nao' && values.dataEventoCv
+      ? parseBRDate(values.dataEventoCv)
+      : null;
 
   const record = {
     id,

@@ -28,7 +28,8 @@ export function avaliarPressaoArterial(
 
 export function avaliarGlicemiaJejum(valor: number | null): ResultadoCritico {
   if (valor == null) return OK;
-  if (valor >= 200) return { severidade: 'critico', mensagem: 'Hiperglicemia grave (≥200)' };
+  // Limiar de alerta vermelho definido no documento de requisitos (UC05): ≥ 250 mg/dL.
+  if (valor >= 250) return { severidade: 'critico', mensagem: 'Hiperglicemia grave (≥250)' };
   if (valor >= 126) return { severidade: 'alerta', mensagem: 'Glicemia elevada (≥126)' };
   if (valor < 70) return { severidade: 'alerta', mensagem: 'Hipoglicemia (<70)' };
   return OK;
