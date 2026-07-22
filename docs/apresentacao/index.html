@@ -123,7 +123,7 @@
   .kpi .n{font-size:clamp(30px,4vw,56px); font-weight:800; color:var(--cyan-d); font-variant-numeric:tabular-nums; line-height:1}
   .kpi .l{font-size:13px; color:var(--ink2); font-weight:600; margin-top:4px}
 
-  .hint{position:fixed; bottom:18px; left:20px; font-size:12px; color:#5E8698; z-index:60}
+  .hint{position:fixed; bottom:16px; left:50%; transform:translateX(-50%); font-size:12px; color:#5E8698; z-index:60; pointer-events:none; white-space:nowrap}
   @media (max-width:760px){ .split,.videos{grid-template-columns:1fr} .phone img,.videos video{height:44vh} }
 
   @media print{
@@ -156,7 +156,7 @@
       </div>
     </div>
     <svg class="pulse" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60 H360 l24 -44 22 88 26 -128 24 96 20 -12 H520 l30 -30 26 60 22 -18 H1200" stroke="#F97316" stroke-width="3" fill="none" opacity=".8"/></svg>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>01</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>01</span></div>
   </section>
 
   <!-- 2 · EQUIPE -->
@@ -164,15 +164,20 @@
     <div class="kicker">Equipe</div>
     <div class="content">
       <h2>Quem construiu</h2>
-      <div class="grid" style="grid-template-columns:1fr; max-width:640px">
+      <div class="grid" style="grid-template-columns:1fr 1fr 1fr">
         <div class="card" style="background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.14)">
-          <h3 style="color:#fff; font-size:clamp(20px,2vw,28px)">Tiago Trindade</h3>
-          <p style="color:#B9D6E0">Concepção, arquitetura, desenvolvimento mobile & backend, testes e2e.</p>
+          <h3 style="color:#fff; font-size:clamp(17px,1.7vw,24px)">Tiago Trindade de Oliveira</h3>
+        </div>
+        <div class="card" style="background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.14)">
+          <h3 style="color:#fff; font-size:clamp(17px,1.7vw,24px)">João Vittor Alves</h3>
+        </div>
+        <div class="card" style="background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.14)">
+          <h3 style="color:#fff; font-size:clamp(17px,1.7vw,24px)">Leonardo Chianca</h3>
         </div>
       </div>
       <p class="lead">Projeto acadêmico da disciplina <b style="color:#fff">UCE II</b> — engenharia de requisitos aplicada a um produto real do ecossistema mare.IA.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>02</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>02</span></div>
   </section>
 
   <!-- 3 · CONTEXTO / PROBLEMA -->
@@ -197,7 +202,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>03</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>03</span></div>
   </section>
 
   <!-- 4 · A IDEIA -->
@@ -213,7 +218,7 @@
         <div class="kpi"><div class="n">100%</div><div class="l">Offline-first</div></div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>04</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>04</span></div>
   </section>
 
   <!-- 5 · REQUISITOS FUNCIONAIS -->
@@ -232,7 +237,7 @@
         <div class="card" style="background:var(--cyan-tint); border-color:#9FE3F0"><h3>RFN001 · Offline <span class="tag imp">importante</span></h3><p>RFN002 · Interface responsiva <span class="tag des">desejável</span></p></div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>05</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>05</span></div>
   </section>
 
   <!-- 6 · REGRAS DE NEGÓCIO -->
@@ -256,7 +261,7 @@
       </div>
       <p class="lead">Essas regras vivem em <b>um único módulo compartilhado</b> — a mesma lógica roda no app e no backend.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>06</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>06</span></div>
   </section>
 
   <!-- 7 · DIVIDER SOLUÇÃO -->
@@ -267,7 +272,7 @@
       <p class="lead">Tecnologias escolhidas, arquitetura e o coração do produto: a sincronização.</p>
     </div>
     <svg class="pulse" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60 H420 l24 -40 20 80 24 -120 22 92 20 -12 H1200" stroke="#38C0DB" stroke-width="3" fill="none" opacity=".6"/></svg>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>07</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>07</span></div>
   </section>
 
   <!-- 8 · STACK + POR QUÊ -->
@@ -286,7 +291,7 @@
         <div class="card"><h3>Maestro</h3><p>Testes e2e reais no simulador iOS.</p></div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>08</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>08</span></div>
   </section>
 
   <!-- 9 · ARQUITETURA -->
@@ -314,7 +319,7 @@
       </div>
       <p class="lead" style="text-align:center; margin:0 auto"><code>packages/shared</code> conecta os dois lados: as regras de negócio e o <b>contrato de sincronização</b> são os mesmos no app e no servidor.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>09</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>09</span></div>
   </section>
 
   <!-- 10 · SINCRONIZAÇÃO -->
@@ -334,7 +339,7 @@
         <div class="phone"><img src="../screenshots/11-sync-toast.png" alt="Pull-to-refresh + toast"></div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>10</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>10</span></div>
   </section>
 
   <!-- 11 · DIVIDER O APP -->
@@ -344,7 +349,7 @@
       <h1>A história de uma visita</h1>
       <p class="lead">Do login à sincronização — todas as telas, um design system clínico "Accessible & Ethical".</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>11</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>11</span></div>
   </section>
 
   <!-- 12 · LOGIN + LISTA -->
@@ -362,7 +367,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>12</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>12</span></div>
   </section>
 
   <!-- 13 · CADASTRO + DETALHE -->
@@ -380,7 +385,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>13</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>13</span></div>
   </section>
 
   <!-- 14 · VISITA + ALERTAS -->
@@ -402,7 +407,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>14</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>14</span></div>
   </section>
 
   <!-- 15 · EVOLUÇÃO -->
@@ -420,7 +425,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>15</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>15</span></div>
   </section>
 
   <!-- 16 · PERFIL / SYNC -->
@@ -437,7 +442,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>16</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>16</span></div>
   </section>
 
   <!-- 17 · VÍDEOS -->
@@ -456,7 +461,7 @@
         </div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>17</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>17</span></div>
   </section>
 
   <!-- 18 · DIVIDER PRÓXIMOS PASSOS -->
@@ -466,7 +471,7 @@
       <h1>Do protótipo ao sistema real</h1>
       <p class="lead">O que existe hoje é uma base sólida e funcional. Para produção, cada peça abaixo precisa evoluir.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>18</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>18</span></div>
   </section>
 
   <!-- 19 · OVERVIEW PRÓXIMOS PASSOS -->
@@ -483,7 +488,7 @@
         <div class="card"><h3>⚙️ Operação</h3><p>CI/CD, publicação nas lojas, observabilidade.</p></div>
       </div>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>19</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>19</span></div>
   </section>
 
   <!-- 20 · AUTH -->
@@ -499,7 +504,7 @@
       </div>
       <p class="lead"><b>Por quê:</b> dados de saúde exigem identidade forte e rastreabilidade de quem coletou o quê.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>20</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>20</span></div>
   </section>
 
   <!-- 21 · DB + BACKEND -->
@@ -515,7 +520,7 @@
       </div>
       <p class="lead"><b>Por quê:</b> durabilidade, concorrência e escala com muitos agentes e dispositivos.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>21</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>21</span></div>
   </section>
 
   <!-- 22 · SEGURANÇA -->
@@ -531,7 +536,7 @@
       </div>
       <p class="lead"><b>Por quê:</b> são dados sensíveis de saúde — a LGPD exige proteção em repouso e em trânsito.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>22</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>22</span></div>
   </section>
 
   <!-- 23 · INTEGRAÇÃO -->
@@ -549,7 +554,7 @@
       </div>
       <p class="lead"><b>Por quê:</b> o valor do dado cresce quando ele conversa com o resto do ecossistema de saúde.</p>
     </div>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>23</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>23</span></div>
   </section>
 
   <!-- 24 · FECHAMENTO -->
@@ -561,10 +566,10 @@
     <div class="content" style="justify-content:center">
       <h1>Obrigado.</h1>
       <p class="lead">CardioRemoto — coleta clínica offline-first, do campo ao banco central.<br>Perguntas?</p>
-      <div class="chips"><span class="chip">Tiago Trindade</span><span class="chip">UCE II · mare.IA</span></div>
+      <div class="chips"><span class="chip">Tiago Trindade · João Vittor · Leonardo Chianca</span><span class="chip">UCE II · mare.IA</span></div>
     </div>
     <svg class="pulse" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60 H360 l24 -44 22 88 26 -128 24 96 20 -12 H520 l30 -30 26 60 22 -18 H1200" stroke="#F97316" stroke-width="3" fill="none" opacity=".8"/></svg>
-    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>24</span></div>
+    <div class="foot"><span><b>CardioRemoto</b></span><span>24</span></div>
   </section>
 
 </div>
