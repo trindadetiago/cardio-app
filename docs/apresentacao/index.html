@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CardioRemoto — Apresentação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B2A3A; --navy2:#0E3446;
+    --cyan:#0891B2; --cyan-d:#0E7490; --cyan-tint:#E0F7FB;
+    --orange:#F97316;
+    --green:#059669; --verde:#047857; --amarelo:#B45309; --vermelho:#B91C1C;
+    --ink:#0F172A; --ink2:#475569; --muted:#94A3B8;
+    --bg:#F4F7F9; --surface:#FFFFFF; --border:#E2E8F0; --border2:#CBD5E1;
+    --shadow:0 10px 30px rgba(15,23,42,.10);
+    --font:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--font); color:var(--ink); background:#06171f;
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  .deck{position:fixed; inset:0}
+  .slide{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    padding:clamp(28px,5vw,80px); opacity:0; visibility:hidden;
+    transition:opacity .45s ease; background:var(--bg);
+    overflow:hidden;
+  }
+  .slide.active{opacity:1; visibility:visible; z-index:1}
+  .slide.dark{background:var(--navy); color:#EAF6FA}
+  .slide.dark h1,.slide.dark h2{color:#fff}
+
+  /* Kicker / headings */
+  .kicker{
+    font-size:clamp(11px,1.1vw,14px); font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--cyan-d);
+  }
+  .slide.dark .kicker{color:#5BD0E6}
+  h1{font-size:clamp(34px,5.4vw,76px); font-weight:800; line-height:1.02; letter-spacing:-.02em; text-wrap:balance}
+  h2{font-size:clamp(26px,3.6vw,50px); font-weight:800; line-height:1.05; letter-spacing:-.02em; text-wrap:balance}
+  .lead{font-size:clamp(16px,1.7vw,23px); color:var(--ink2); line-height:1.5; max-width:60ch}
+  .slide.dark .lead{color:#B9D6E0}
+  p{line-height:1.55}
+
+  .content{flex:1; display:flex; flex-direction:column; justify-content:center; gap:clamp(14px,2vw,26px); min-height:0}
+  .grid{display:grid; gap:clamp(12px,1.4vw,20px)}
+
+  /* Footer */
+  .foot{position:absolute; left:clamp(28px,5vw,80px); right:clamp(28px,5vw,80px); bottom:clamp(16px,2.4vh,28px);
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12px; color:var(--muted); letter-spacing:.02em}
+  .slide.dark .foot{color:#5E8698}
+  .foot b{color:var(--cyan-d); font-weight:700}
+  .slide.dark .foot b{color:#5BD0E6}
+
+  /* Progress */
+  .progress{position:fixed; top:0; left:0; height:4px; background:linear-gradient(90deg,var(--cyan),var(--orange)); z-index:50; transition:width .35s ease}
+
+  /* Nav arrows */
+  .nav{position:fixed; bottom:18px; right:20px; display:flex; gap:8px; z-index:60}
+  .nav button{width:40px; height:40px; border-radius:12px; border:1px solid var(--border2);
+    background:rgba(255,255,255,.9); color:var(--ink); font-size:18px; cursor:pointer; backdrop-filter:blur(6px)}
+  .nav button:hover{background:#fff; border-color:var(--cyan)}
+
+  /* Hero */
+  .brand{display:flex; align-items:center; gap:14px}
+  .logo{width:clamp(56px,6vw,84px); height:clamp(56px,6vw,84px); border-radius:50%;
+    background:radial-gradient(circle at 50% 35%, #12435a, #0B2A3A 70%);
+    display:grid; place-items:center; box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .logo svg{width:62%; height:62%}
+  .wordmark{font-weight:800; font-size:clamp(20px,2.2vw,30px); letter-spacing:-.01em; color:#EAF6FA}
+  .wordmark .ia{color:var(--orange)}
+  .hero-title{margin-top:auto}
+  .hero-title h1{color:#fff}
+  .hero-title .accent{color:#38C0DB}
+  .pulse{position:absolute; left:0; right:0; bottom:20%; width:100%; opacity:.5}
+  .chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:20px}
+  .chip{font-size:13px; font-weight:600; padding:8px 14px; border-radius:999px;
+    background:rgba(56,192,219,.12); color:#9FE3F0; border:1px solid rgba(56,192,219,.25)}
+
+  /* Cards */
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:clamp(14px,1.5vw,22px); box-shadow:var(--shadow)}
+  .card h3{font-size:clamp(15px,1.4vw,19px); font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px}
+  .card p{font-size:clamp(13px,1.15vw,15.5px); color:var(--ink2)}
+  .dot{width:10px;height:10px;border-radius:50%;flex:none}
+
+  .tag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+  .tag.ess{background:#FEE2E2;color:#991B1B}
+  .tag.imp{background:#FEF3C7;color:#92400E}
+  .tag.des{background:#E0F2FE;color:#075985}
+
+  ul.clean{list-style:none; display:flex; flex-direction:column; gap:10px}
+  ul.clean li{display:flex; gap:12px; font-size:clamp(14px,1.3vw,18px); color:var(--ink); line-height:1.45}
+  ul.clean li::before{content:""; flex:none; width:9px; height:9px; border-radius:2px; background:var(--cyan); margin-top:.5em; transform:rotate(45deg)}
+  .slide.dark ul.clean li{color:#DDEEF3}
+
+  /* Phone frames */
+  .phones{display:flex; gap:clamp(14px,2vw,34px); align-items:center; justify-content:center; flex-wrap:wrap}
+  .phone{border-radius:30px; border:3px solid #0F172A; background:#0F172A; padding:5px;
+    box-shadow:0 18px 40px rgba(15,23,42,.22); overflow:hidden}
+  .phone img{display:block; height:min(58vh,620px); width:auto; border-radius:24px}
+  .cap{text-align:center; font-size:13px; color:var(--ink2); margin-top:10px; font-weight:600}
+
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,3vw,48px); align-items:center; height:100%}
+  .split.narrow-left{grid-template-columns:1.05fr .95fr}
+  .videos{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2.5vw,40px); align-items:center; justify-items:center}
+  .videos video{height:min(62vh,660px); width:auto; border-radius:26px; border:3px solid #0F172A; background:#000; box-shadow:0 18px 40px rgba(0,0,0,.4)}
+
+  /* Diagram */
+  .arch{display:flex; align-items:stretch; justify-content:center; gap:clamp(16px,3vw,60px); flex-wrap:wrap}
+  .node{background:var(--surface); border:2px solid var(--border2); border-radius:20px; padding:clamp(16px,1.8vw,28px); width:min(340px,40vw); box-shadow:var(--shadow)}
+  .node .nt{font-weight:800; font-size:clamp(16px,1.6vw,22px); margin-bottom:4px}
+  .node .ns{font-size:13px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px}
+  .arrows{display:flex; flex-direction:column; justify-content:center; align-items:center; gap:10px; color:var(--cyan-d); font-weight:700; font-size:14px}
+  .arrows .a{font-size:26px}
+
+  .kpis{display:flex; gap:clamp(16px,3vw,50px); flex-wrap:wrap}
+  .kpi .n{font-size:clamp(30px,4vw,56px); font-weight:800; color:var(--cyan-d); font-variant-numeric:tabular-nums; line-height:1}
+  .kpi .l{font-size:13px; color:var(--ink2); font-weight:600; margin-top:4px}
+
+  .hint{position:fixed; bottom:18px; left:20px; font-size:12px; color:#5E8698; z-index:60}
+  @media (max-width:760px){ .split,.videos{grid-template-columns:1fr} .phone img,.videos video{height:44vh} }
+
+  @media print{
+    body{overflow:visible}
+    .slide{position:relative; opacity:1!important; visibility:visible!important; page-break-after:always; height:100vh; break-inside:avoid}
+    .progress,.nav,.hint{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · HERO -->
+  <section class="slide dark active">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 100 100" fill="none"><path d="M8 54 Q25 40 42 54 T76 54 T96 50" stroke="#38C0DB" stroke-width="7" stroke-linecap="round"/><path d="M10 70 Q27 58 44 70 T78 70 T96 66" stroke="#0891B2" stroke-width="6" stroke-linecap="round" opacity=".7"/></svg>
+      </div>
+      <div class="wordmark">mare<span class="ia">.IA</span></div>
+    </div>
+    <div class="hero-title">
+      <div class="kicker">Plataforma digital de monitoramento cardiovascular</div>
+      <h1 style="margin-top:14px">Cardio<span class="accent">Remoto</span></h1>
+      <p class="lead" style="margin-top:18px">Coleta clínica <b style="color:#fff">offline-first</b> para agentes de saúde do Hospital Universitário — classificação de risco, prioridade de visita e sincronização automática com o banco central.</p>
+      <div class="chips">
+        <span class="chip">UCE II · 2026</span>
+        <span class="chip">Ecossistema mare.IA</span>
+        <span class="chip">João Pessoa — PB</span>
+      </div>
+    </div>
+    <svg class="pulse" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60 H360 l24 -44 22 88 26 -128 24 96 20 -12 H520 l30 -30 26 60 22 -18 H1200" stroke="#F97316" stroke-width="3" fill="none" opacity=".8"/></svg>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>01</span></div>
+  </section>
+
+  <!-- 2 · EQUIPE -->
+  <section class="slide dark">
+    <div class="kicker">Equipe</div>
+    <div class="content">
+      <h2>Quem construiu</h2>
+      <div class="grid" style="grid-template-columns:1fr; max-width:640px">
+        <div class="card" style="background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.14)">
+          <h3 style="color:#fff; font-size:clamp(20px,2vw,28px)">Tiago Trindade</h3>
+          <p style="color:#B9D6E0">Concepção, arquitetura, desenvolvimento mobile & backend, testes e2e.</p>
+        </div>
+      </div>
+      <p class="lead">Projeto acadêmico da disciplina <b style="color:#fff">UCE II</b> — engenharia de requisitos aplicada a um produto real do ecossistema mare.IA.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>02</span></div>
+  </section>
+
+  <!-- 3 · CONTEXTO / PROBLEMA -->
+  <section class="slide">
+    <div class="kicker">O contexto</div>
+    <div class="content">
+      <h2>Acompanhar quem não pode esperar a próxima consulta</h2>
+      <div class="split">
+        <div>
+          <p class="lead">O Hospital Universitário acompanha pacientes cardiovasculares por meio de <b>agentes de saúde em campo</b>. Cada visita coleta dados antropométricos, sinais vitais e exames — mas o trabalho acontece onde a <b>conectividade é instável</b>.</p>
+          <ul class="clean" style="margin-top:22px">
+            <li>Dados precisam ser coletados mesmo <b>sem internet</b></li>
+            <li>É preciso saber <b>quem está em risco</b> e <b>quem visitar primeiro</b></li>
+            <li>Tudo deve convergir para um <b>banco central</b> quando houver rede</li>
+          </ul>
+        </div>
+        <div class="grid" style="grid-template-columns:1fr 1fr">
+          <div class="card"><h3><span class="dot" style="background:var(--verde)"></span>Controlado</h3><p>Parâmetros na meta, sem evento recente.</p></div>
+          <div class="card"><h3><span class="dot" style="background:var(--amarelo)"></span>Moderado</h3><p>1–2 parâmetros fora da meta.</p></div>
+          <div class="card"><h3><span class="dot" style="background:var(--vermelho)"></span>Grave</h3><p>3+ fora da meta ou evento recente.</p></div>
+          <div class="card"><h3><span class="dot" style="background:var(--muted)"></span>Sem dados</h3><p>Sem exames para classificar.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>03</span></div>
+  </section>
+
+  <!-- 4 · A IDEIA -->
+  <section class="slide">
+    <div class="kicker">A ideia — do documento de requisitos</div>
+    <div class="content">
+      <h2>Um app de coleta que guia a decisão clínica</h2>
+      <p class="lead">O agente de saúde <b>faz login</b>, vê a <b>lista de pacientes</b> e, para cada um, pode <b>cadastrar</b>, <b>registrar visitas</b> e <b>acompanhar a evolução</b> dos exames. O sistema <b>classifica o risco</b> e <b>ordena por prioridade de visita</b> automaticamente — funcionando offline e sincronizando quando possível.</p>
+      <div class="kpis" style="margin-top:10px">
+        <div class="kpi"><div class="n">7</div><div class="l">Requisitos funcionais</div></div>
+        <div class="kpi"><div class="n">2</div><div class="l">Não-funcionais</div></div>
+        <div class="kpi"><div class="n">7</div><div class="l">Casos de uso (UC01–07)</div></div>
+        <div class="kpi"><div class="n">100%</div><div class="l">Offline-first</div></div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>04</span></div>
+  </section>
+
+  <!-- 5 · REQUISITOS FUNCIONAIS -->
+  <section class="slide">
+    <div class="kicker">Requisitos funcionais</div>
+    <div class="content">
+      <h2>O que o sistema faz</h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr">
+        <div class="card"><h3>RF001 · Login <span class="tag ess">essencial</span></h3><p>Acesso do agente com bloqueio após 5 tentativas (UC01).</p></div>
+        <div class="card"><h3>RF002 · Cadastrar paciente <span class="tag ess">essencial</span></h3><p>CPF, nascimento (idade automática), tabagismo, atividade física, estatina e histórico CV.</p></div>
+        <div class="card"><h3>RF003 · Filtrar por risco <span class="tag imp">importante</span></h3><p>Todos · Controlado · Moderado · Grave.</p></div>
+        <div class="card"><h3>RF004 · Ordenar por prioridade <span class="tag ess">essencial</span></h3><p>Visitas atrasadas primeiro; nunca visitados no topo.</p></div>
+        <div class="card"><h3>RF005 · Inserir visita <span class="tag ess">essencial</span></h3><p>Antropométricos, sinais vitais e exames laboratoriais, com alertas críticos.</p></div>
+        <div class="card"><h3>RF006 · Evolução <span class="tag ess">essencial</span></h3><p>Tabela + gráfico temporal (small multiples).</p></div>
+        <div class="card"><h3>RF007 · Sincronizar <span class="tag imp">importante</span></h3><p>Envio dos dados locais ao banco central (online).</p></div>
+        <div class="card" style="background:var(--cyan-tint); border-color:#9FE3F0"><h3>RFN001 · Offline <span class="tag imp">importante</span></h3><p>RFN002 · Interface responsiva <span class="tag des">desejável</span></p></div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>05</span></div>
+  </section>
+
+  <!-- 6 · REGRAS DE NEGÓCIO -->
+  <section class="slide">
+    <div class="kicker">Regras de negócio — definidas no documento</div>
+    <div class="content">
+      <h2>Como o risco, a prioridade e os alertas são calculados</h2>
+      <div class="split" style="grid-template-columns:1fr 1fr 1fr; display:grid; gap:clamp(14px,2vw,28px)">
+        <div class="card">
+          <h3>🎯 Metas</h3>
+          <ul class="clean" style="margin-top:6px"><li>PA &lt; 140/90</li><li>HbA1c &lt; 7%</li><li>LDL &lt; 130 mg/dL</li></ul>
+        </div>
+        <div class="card">
+          <h3>📅 Prioridade de visita</h3>
+          <ul class="clean" style="margin-top:6px"><li>Controlado: a cada <b>90 dias</b></li><li>Não controlado: a cada <b>30 dias</b></li><li>Atrasados têm prioridade</li></ul>
+        </div>
+        <div class="card">
+          <h3>⚠️ Alertas críticos</h3>
+          <ul class="clean" style="margin-top:6px"><li>PA ≥ 180/120 ou &lt; 90/60</li><li>Glicemia ≥ 250 ou &lt; 70</li><li>LDL ≥ 190 mg/dL</li></ul>
+        </div>
+      </div>
+      <p class="lead">Essas regras vivem em <b>um único módulo compartilhado</b> — a mesma lógica roda no app e no backend.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>06</span></div>
+  </section>
+
+  <!-- 7 · DIVIDER SOLUÇÃO -->
+  <section class="slide dark">
+    <div class="content" style="justify-content:center">
+      <div class="kicker">A solução</div>
+      <h1>Como construímos</h1>
+      <p class="lead">Tecnologias escolhidas, arquitetura e o coração do produto: a sincronização.</p>
+    </div>
+    <svg class="pulse" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60 H420 l24 -40 20 80 24 -120 22 92 20 -12 H1200" stroke="#38C0DB" stroke-width="3" fill="none" opacity=".6"/></svg>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>07</span></div>
+  </section>
+
+  <!-- 8 · STACK + POR QUÊ -->
+  <section class="slide">
+    <div class="kicker">Tecnologias & por quê</div>
+    <div class="content">
+      <h2>Escolhas a serviço do offline-first</h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="card"><h3>Expo · React Native · TS</h3><p>Um código para iOS e Android, com tipagem forte de ponta a ponta.</p></div>
+        <div class="card"><h3>op-SQLite · Drizzle ORM</h3><p>Banco no dispositivo → funciona 100% offline (RFN001). SQL type-safe + migrações versionadas.</p></div>
+        <div class="card"><h3>react-hook-form · Zod</h3><p>Formulários performáticos e validação declarativa (CPF, obrigatórios, regras condicionais).</p></div>
+        <div class="card"><h3>TanStack Query · Zustand</h3><p>Estado assíncrono e de UI sem boilerplate.</p></div>
+        <div class="card"><h3>react-native-svg</h3><p>Gráfico de evolução "small multiples" desenhado sob medida.</p></div>
+        <div class="card"><h3>Node <code>node:http</code> + <code>node:sqlite</code></h3><p>Banco central sem dependências externas — o contrato de sync de forma enxuta.</p></div>
+        <div class="card" style="grid-column:span 2; background:var(--cyan-tint); border-color:#9FE3F0"><h3>Monorepo + <code>packages/shared</code></h3><p>Risco, prioridade, alertas e o contrato de sync numa <b>única fonte de verdade</b>, usada por app e backend.</p></div>
+        <div class="card"><h3>Maestro</h3><p>Testes e2e reais no simulador iOS.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>08</span></div>
+  </section>
+
+  <!-- 9 · ARQUITETURA -->
+  <section class="slide">
+    <div class="kicker">Arquitetura — visão geral</div>
+    <div class="content">
+      <h2>Dispositivo autônomo, banco central como destino</h2>
+      <div class="arch">
+        <div class="node">
+          <div class="nt">📱 Dispositivo do agente</div>
+          <div class="ns">Front-end · offline-first</div>
+          <ul class="clean"><li>App Expo / React Native</li><li>Dataset local (op-SQLite)</li><li>Fila de mudanças <code>sync_queue</code></li></ul>
+        </div>
+        <div class="arrows">
+          <div class="a">⇄</div>
+          <div>push (envia)</div>
+          <div>pull (recebe)</div>
+          <div style="color:var(--muted);font-weight:600">HTTP / JSON</div>
+        </div>
+        <div class="node">
+          <div class="nt">🗄️ Banco central</div>
+          <div class="ns">Back-end</div>
+          <ul class="clean"><li>Document-store (tipo, id)</li><li>Merge last-write-wins</li><li>Cursor incremental (seq)</li></ul>
+        </div>
+      </div>
+      <p class="lead" style="text-align:center; margin:0 auto"><code>packages/shared</code> conecta os dois lados: as regras de negócio e o <b>contrato de sincronização</b> são os mesmos no app e no servidor.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>09</span></div>
+  </section>
+
+  <!-- 10 · SINCRONIZAÇÃO -->
+  <section class="slide">
+    <div class="kicker">Sincronização — o coração do produto</div>
+    <div class="content">
+      <h2>Automática, invisível e sem perder dados</h2>
+      <div class="split">
+        <ul class="clean">
+          <li>Toda alteração local entra na <b>fila de sincronização</b></li>
+          <li><b>Push</b> envia as mutações pendentes; o servidor faz <b>merge</b> por <code>updatedAt</code> (last-write-wins)</li>
+          <li><b>Pull</b> incremental por <b>cursor</b> traz só o que mudou</li>
+          <li>Dispara sozinha: ao <b>salvar</b>, ao <b>abrir</b> o app e ao <b>reconectar</b></li>
+          <li><b>Puxar para atualizar</b> força um sync; um <b>toast</b> avisa o que chegou</li>
+          <li>Offline nunca bloqueia: os dados ficam seguros até haver rede</li>
+        </ul>
+        <div class="phone"><img src="../screenshots/11-sync-toast.png" alt="Pull-to-refresh + toast"></div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>10</span></div>
+  </section>
+
+  <!-- 11 · DIVIDER O APP -->
+  <section class="slide dark">
+    <div class="content" style="justify-content:center">
+      <div class="kicker">O aplicativo</div>
+      <h1>A história de uma visita</h1>
+      <p class="lead">Do login à sincronização — todas as telas, um design system clínico "Accessible & Ethical".</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>11</span></div>
+  </section>
+
+  <!-- 12 · LOGIN + LISTA -->
+  <section class="slide">
+    <div class="kicker">1 · Acesso e triagem</div>
+    <div class="content">
+      <div class="split">
+        <div>
+          <h2>Entrar e ver quem precisa de atenção</h2>
+          <p class="lead">Login seguro (bloqueio após 5 tentativas). A lista já chega <b>ordenada por prioridade de visita</b>, com o selo de risco de cada paciente e filtros por estado.</p>
+        </div>
+        <div class="phones">
+          <div><div class="phone"><img src="../screenshots/01-login.png" alt="Login"></div><div class="cap">Login</div></div>
+          <div><div class="phone"><img src="../screenshots/02-pacientes.png" alt="Lista de pacientes"></div><div class="cap">Lista · risco + prioridade</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>12</span></div>
+  </section>
+
+  <!-- 13 · CADASTRO + DETALHE -->
+  <section class="slide">
+    <div class="kicker">2 · Cadastro e perfil clínico</div>
+    <div class="content">
+      <div class="split">
+        <div>
+          <h2>Dados que alimentam a classificação</h2>
+          <p class="lead">Cadastro com CPF validado, idade automática e fatores de risco <b>categóricos</b> (tabagismo, atividade física, histórico CV). O detalhe mostra o <b>risco calculado</b> e a próxima visita.</p>
+        </div>
+        <div class="phones">
+          <div><div class="phone"><img src="../screenshots/08-novo-paciente.png" alt="Cadastro"></div><div class="cap">Cadastro categórico</div></div>
+          <div><div class="phone"><img src="../screenshots/04-detalhe.png" alt="Detalhe"></div><div class="cap">Detalhe · risco Grave</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>13</span></div>
+  </section>
+
+  <!-- 14 · VISITA + ALERTAS -->
+  <section class="slide">
+    <div class="kicker">3 · Registrar a visita</div>
+    <div class="content">
+      <div class="split">
+        <div>
+          <h2>Coleta guiada, com alertas em tempo real</h2>
+          <p class="lead">Antropométricos (IMC automático), sinais vitais e o <b>painel laboratorial completo</b>. Valores críticos acendem <b>alertas imediatos</b> — aqui, crise hipertensiva.</p>
+          <ul class="clean" style="margin-top:16px">
+            <li>IMC calculado ao vivo</li>
+            <li>Glicemia capilar + exames (ureia, TSH, TGO, TGP, CPK…)</li>
+            <li>Alertas de PA, glicemia e LDL fora da faixa</li>
+          </ul>
+        </div>
+        <div class="phones">
+          <div><div class="phone"><img src="../screenshots/07-nova-visita.png" alt="Nova visita"></div><div class="cap">Nova visita · alerta crítico</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>14</span></div>
+  </section>
+
+  <!-- 15 · EVOLUÇÃO -->
+  <section class="slide">
+    <div class="kicker">4 · Acompanhar a evolução</div>
+    <div class="content">
+      <div class="split">
+        <div>
+          <h2>A trajetória dos exames no tempo</h2>
+          <p class="lead">Gráfico <b>small multiples</b> — cada métrica em sua faixa, no mesmo eixo temporal — e a mesma informação em <b>tabela</b>. Toque para mostrar/ocultar métricas.</p>
+        </div>
+        <div class="phones">
+          <div><div class="phone"><img src="../screenshots/05-evolucao-grafico.png" alt="Evolução gráfico"></div><div class="cap">Gráfico temporal</div></div>
+          <div><div class="phone"><img src="../screenshots/06-evolucao-tabela.png" alt="Evolução tabela"></div><div class="cap">Tabela por data</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>15</span></div>
+  </section>
+
+  <!-- 16 · PERFIL / SYNC -->
+  <section class="slide">
+    <div class="kicker">5 · Sincronização & perfil</div>
+    <div class="content">
+      <div class="split">
+        <div>
+          <h2>Sync sem fricção</h2>
+          <p class="lead">Sem aba dedicada: um indicador de status no topo da lista e um botão de <b>"sincronizar agora"</b> no Perfil. O resto acontece sozinho.</p>
+        </div>
+        <div class="phones">
+          <div><div class="phone"><img src="../screenshots/10-perfil.png" alt="Perfil"></div><div class="cap">Perfil · status + envio manual</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>16</span></div>
+  </section>
+
+  <!-- 17 · VÍDEOS -->
+  <section class="slide dark">
+    <div class="kicker">Em movimento</div>
+    <div class="content">
+      <h2 style="margin-bottom:6px">Duas histórias, ao vivo</h2>
+      <div class="videos">
+        <div>
+          <video src="../videos/01-jornada-completa.mp4" controls preload="metadata" playsinline muted></video>
+          <div class="cap" style="color:#B9D6E0">Jornada completa — login → visita → evolução → sync</div>
+        </div>
+        <div>
+          <video src="../videos/03-visita-alertas.mp4" controls preload="metadata" playsinline muted></video>
+          <div class="cap" style="color:#B9D6E0">Alertas críticos na coleta</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>17</span></div>
+  </section>
+
+  <!-- 18 · DIVIDER PRÓXIMOS PASSOS -->
+  <section class="slide dark">
+    <div class="content" style="justify-content:center">
+      <div class="kicker">Próximos passos</div>
+      <h1>Do protótipo ao sistema real</h1>
+      <p class="lead">O que existe hoje é uma base sólida e funcional. Para produção, cada peça abaixo precisa evoluir.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>18</span></div>
+  </section>
+
+  <!-- 19 · OVERVIEW PRÓXIMOS PASSOS -->
+  <section class="slide">
+    <div class="kicker">Panorama</div>
+    <div class="content">
+      <h2>O que falta para produção</h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="card"><h3>🔐 Autenticação real</h3><p>Hoje: login local. Falta: serviço de auth + perfis.</p></div>
+        <div class="card"><h3>🗄️ Banco central real</h3><p>Hoje: SQLite de prova. Falta: PostgreSQL gerenciado.</p></div>
+        <div class="card"><h3>🔌 Backend & API</h3><p>Hoje: HTTP mínimo. Falta: API autenticada e validada.</p></div>
+        <div class="card"><h3>🛡️ Segurança & LGPD</h3><p>Dados de saúde exigem criptografia e auditoria.</p></div>
+        <div class="card"><h3>🧩 Integração mare.IA</h3><p>Prontuário do HU (FHIR/HL7) e IA de triagem.</p></div>
+        <div class="card"><h3>⚙️ Operação</h3><p>CI/CD, publicação nas lojas, observabilidade.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>19</span></div>
+  </section>
+
+  <!-- 20 · AUTH -->
+  <section class="slide">
+    <div class="kicker">Próximo passo · 1</div>
+    <div class="content">
+      <h2>🔐 Autenticação & usuários</h2>
+      <div class="split">
+        <div class="card"><h3>Hoje</h3><p>Login local contra um agente semeado no dispositivo; bloqueio por tentativas já implementado.</p></div>
+        <div class="card" style="border-color:var(--cyan); background:var(--cyan-tint)"><h3>Para produção</h3>
+          <ul class="clean" style="margin-top:6px"><li>Serviço de auth (OAuth2 / JWT)</li><li>Cadastro e gestão de agentes</li><li>Perfis e permissões (RBAC)</li><li>Recuperação de senha e MFA</li></ul>
+        </div>
+      </div>
+      <p class="lead"><b>Por quê:</b> dados de saúde exigem identidade forte e rastreabilidade de quem coletou o quê.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>20</span></div>
+  </section>
+
+  <!-- 21 · DB + BACKEND -->
+  <section class="slide">
+    <div class="kicker">Próximo passo · 2</div>
+    <div class="content">
+      <h2>🗄️ Banco de dados & API</h2>
+      <div class="split">
+        <div class="card"><h3>Hoje</h3><p>Banco central em <code>node:sqlite</code> (arquivo/memória) e um servidor <code>node:http</code> mínimo — prova de conceito do contrato de sync.</p></div>
+        <div class="card" style="border-color:var(--cyan); background:var(--cyan-tint)"><h3>Para produção</h3>
+          <ul class="clean" style="margin-top:6px"><li>PostgreSQL gerenciado + backups/replicação</li><li>API versionada e autenticada</li><li>Validação server-side (Zod compartilhado)</li><li>Resolução de conflitos por campo, idempotência, paginação</li></ul>
+        </div>
+      </div>
+      <p class="lead"><b>Por quê:</b> durabilidade, concorrência e escala com muitos agentes e dispositivos.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>21</span></div>
+  </section>
+
+  <!-- 22 · SEGURANÇA -->
+  <section class="slide">
+    <div class="kicker">Próximo passo · 3</div>
+    <div class="content">
+      <h2>🛡️ Segurança & LGPD</h2>
+      <div class="split">
+        <div class="card"><h3>Hoje</h3><p>Rede local permitida (ATS), dados em texto no dispositivo. Suficiente para protótipo, insuficiente para dados reais.</p></div>
+        <div class="card" style="border-color:var(--cyan); background:var(--cyan-tint)"><h3>Para produção</h3>
+          <ul class="clean" style="margin-top:6px"><li>Criptografia do banco local (SQLCipher)</li><li>TLS + gestão de segredos</li><li>Consentimento e trilha de auditoria</li><li>Anonimização e política de retenção</li></ul>
+        </div>
+      </div>
+      <p class="lead"><b>Por quê:</b> são dados sensíveis de saúde — a LGPD exige proteção em repouso e em trânsito.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>22</span></div>
+  </section>
+
+  <!-- 23 · INTEGRAÇÃO -->
+  <section class="slide">
+    <div class="kicker">Próximo passo · 4</div>
+    <div class="content">
+      <h2>🧩 Integração mare.IA & operação</h2>
+      <div class="split">
+        <div class="card"><h3>Integração</h3>
+          <ul class="clean" style="margin-top:6px"><li>Prontuário do HU via <b>FHIR/HL7</b></li><li>IA de triagem e predição de risco (mare.IA)</li><li>Notificações de visita (push)</li></ul>
+        </div>
+        <div class="card"><h3>Operação & qualidade</h3>
+          <ul class="clean" style="margin-top:6px"><li>CI/CD + EAS Build e publicação nas lojas</li><li>Observabilidade (logs, métricas, Sentry)</li><li>Testes de carga e monitoramento</li></ul>
+        </div>
+      </div>
+      <p class="lead"><b>Por quê:</b> o valor do dado cresce quando ele conversa com o resto do ecossistema de saúde.</p>
+    </div>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>23</span></div>
+  </section>
+
+  <!-- 24 · FECHAMENTO -->
+  <section class="slide dark">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 100 100" fill="none"><path d="M8 54 Q25 40 42 54 T76 54 T96 50" stroke="#38C0DB" stroke-width="7" stroke-linecap="round"/><path d="M10 70 Q27 58 44 70 T78 70 T96 66" stroke="#0891B2" stroke-width="6" stroke-linecap="round" opacity=".7"/></svg></div>
+      <div class="wordmark">mare<span class="ia">.IA</span></div>
+    </div>
+    <div class="content" style="justify-content:center">
+      <h1>Obrigado.</h1>
+      <p class="lead">CardioRemoto — coleta clínica offline-first, do campo ao banco central.<br>Perguntas?</p>
+      <div class="chips"><span class="chip">Tiago Trindade</span><span class="chip">UCE II · mare.IA</span></div>
+    </div>
+    <svg class="pulse" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60 H360 l24 -44 22 88 26 -128 24 96 20 -12 H520 l30 -30 26 60 22 -18 H1200" stroke="#F97316" stroke-width="3" fill="none" opacity=".8"/></svg>
+    <div class="foot"><span><b>CardioRemoto</b> · mare.IA</span><span>24</span></div>
+  </section>
+
+</div>
+
+<div class="nav"><button id="prev" aria-label="Anterior">‹</button><button id="next" aria-label="Próximo">›</button></div>
+<div class="hint">← → navegar · F tela cheia</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const prog=document.getElementById('progress');
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    prog.style.width=((i+1)/slides.length*100)+'%';
+    location.hash=i+1;
+    // pause videos not on screen
+    document.querySelectorAll('video').forEach(v=>{ if(!v.closest('.slide').classList.contains('active')) v.pause(); });
+  }
+  function next(){show(i+1)} function prev(){show(i-1)}
+  document.getElementById('next').onclick=next;
+  document.getElementById('prev').onclick=prev;
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next()}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}
+    else if(e.key==='Home'){show(0)} else if(e.key==='End'){show(slides.length-1)}
+    else if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  });
+  const start=parseInt(location.hash.replace('#',''))||1;
+  show(start-1);
+</script>
+</body>
+</html>

@@ -157,6 +157,8 @@ A URL do backend é configurável via `EXPO_PUBLIC_API_URL` (padrão `http://loc
 
 ## Documentos
 
-- [`docs/pitch/index.html`](./docs/pitch/index.html) — pitch de slides (autocontido; abra no navegador)
+- [`docs/apresentacao/index.html`](./docs/apresentacao/index.html) — **apresentação completa** (equipe, requisitos, solução, arquitetura, tour do app com vídeos e próximos passos; abra no navegador, navegue com ← →, `F` para tela cheia)
+- [`docs/videos/`](./docs/videos/) — vídeos das principais histórias de uso (jornada completa, cadastro, alertas, evolução, filtro, login, sync)
+- [`docs/pitch/index.html`](./docs/pitch/index.html) — pitch curto de slides (autocontido)
 - [`PLANO.md`](./PLANO.md) — plano de ação, sprints e premissas
 - `DocumentoRequisitosV2.pdf` — requisitos originais
