@@ -8,6 +8,14 @@ parte do ecossistema **mare.IA**. Baseado no Documento de Requisitos V2 (UCE II)
 Este repositório é um **monorepo** (npm workspaces) com o app de coleta (Expo/React Native),
 o backend de sincronização (banco central) e um pacote de lógica de domínio compartilhada.
 
+## Equipe
+
+Projeto acadêmico da disciplina **UCE II**.
+
+- Tiago Trindade de Oliveira
+- João Vittor Alves
+- Leonardo Chianca
+
 ## Telas
 
 <table>
@@ -160,6 +168,7 @@ A URL do backend é configurável via `EXPO_PUBLIC_API_URL` (padrão `http://loc
 ## Documentos
 
 - [`docs/apresentacao/index.html`](./docs/apresentacao/index.html) — **apresentação completa** (equipe, requisitos, solução, arquitetura, tour do app com vídeos e próximos passos; abra no navegador, navegue com ← →, `F` para tela cheia)
+- [`docs/apresentacao/CardioRemoto-apresentacao.html`](./docs/apresentacao/CardioRemoto-apresentacao.html) — **mesma apresentação em arquivo único** (mídia embutida; basta enviar/abrir esse `.html`). Gerada por `node docs/apresentacao/build-standalone.mjs`
 - [`docs/videos/`](./docs/videos/) — vídeos das principais histórias de uso (jornada completa, cadastro, alertas, evolução, filtro, login, sync)
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — fluxo de contribuição e verificação por CI
 - [`PLANO.md`](./PLANO.md) — plano de ação, sprints e premissas
