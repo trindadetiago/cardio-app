@@ -1,0 +1,35 @@
+name: CI
+
+# Verifica todo push na main e todo pull request: tipos, testes e lint.
+# Os testes e2e (Maestro) exigem simulador e rodam localmente (npm run test:e2e).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verificar:
+    name: Typecheck · Testes · Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Typecheck (shared + mobile)
+        run: npm run typecheck
+
+      - name: Testes unitários (shared + backend + mobile)
+        run: npm test
+
+      - name: Lint
+        run: npm run lint
