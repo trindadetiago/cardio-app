@@ -4,7 +4,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Card, Chip, Txt } from '@/components/ui/kit';
-import { EvolucaoChart } from '@/components/evolucao-chart';
+import { EvoluacaoChart } from '@/components/evolucao-chart';
 import { useResponsive } from '@/hooks/use-responsive';
 import { usePaciente } from '@/src/features/pacientes/pacientes-hooks';
 import { useVisitasByPaciente } from '@/src/features/visitas/visitas-hooks';
@@ -87,7 +87,7 @@ export default function EvolucaoScreen() {
               <Txt variant="caption">Selecione ao menos uma métrica.</Txt>
             ) : modo === 'grafico' ? (
               <Card testID="evolucao-grafico">
-                <EvolucaoChart series={seriesVisiveis} />
+                <EvoluacaoChart series={seriesVisiveis} />
               </Card>
             ) : (
               <TabelaEvolucao linhas={linhasTabela} series={seriesVisiveis} />
